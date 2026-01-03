@@ -21,10 +21,11 @@ router.get('/:id', async (req, res) => {
 // POST a new trip
 router.post('/', async (req, res) => {
   const { name, date, location } = req.body;
+  const isoDate = new Date(date).toISOString();
   const trip = await prisma.trip.create({
     data: {
       name,
-      date,
+      date: isoDate,
       location,
     },
   });
@@ -35,11 +36,12 @@ router.post('/', async (req, res) => {
 router.put('/:id', async (req, res) => {
   const { id } = req.params;
   const { name, date, location } = req.body;
+  const isoDate = new Date(date).toISOString();
   const trip = await prisma.trip.update({
     where: { id },
     data: {
       name,
-      date,
+      date: isoDate,
       location,
     },
   });

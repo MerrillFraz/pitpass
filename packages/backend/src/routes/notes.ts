@@ -16,11 +16,12 @@ router.get('/:tripId/notes', async (req, res) => {
 router.post('/:tripId/notes', async (req, res) => {
   const { tripId } = req.params;
   const { content, date } = req.body;
+  const isoDate = new Date(date).toISOString();
   const note = await prisma.note.create({
     data: {
       tripId,
       content,
-      date,
+      date: isoDate,
     },
   });
   res.json(note);
