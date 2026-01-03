@@ -15,16 +15,17 @@ WORKDIR /usr/src/app
 COPY --from=deps /usr/src/app/node_modules ./node_modules
 COPY . .
 # Generate prisma client
-RUN npx prisma generate --schema=./packages/backend/prisma/schema.prisma
+RUN npm run prisma:generate -w backend
 RUN npm run build -w backend
 
 # 3. Run the application
 FROM node:20-alpine AS runner
 WORKDIR /usr/src/app
-COPY --from=builder /usr/src/app/dist ./dist
+COPY --from=builder /usr/src/app/packages/backend/dist ./dist
 COPY --from=builder /usr/src/app/node_modules ./node_modules
 COPY --from=builder /usr/src/app/packages/backend/package.json ./packages/backend/package.json
 COPY --from=builder /usr/src/app/packages/backend/prisma ./packages/backend/prisma
+COPY --from=builder /usr/src/app/packages/backend/prisma.config.ts ./packages/backend/prisma.config.ts
 COPY --from=builder /usr/src/app/packages/backend/.env ./packages/backend/.env
 EXPOSE 3000
 CMD ["node", "dist/index.js"]

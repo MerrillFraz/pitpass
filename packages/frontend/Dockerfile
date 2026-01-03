@@ -7,7 +7,7 @@ WORKDIR /usr/src/app
 COPY package.json package-lock.json* ./
 # Copy frontend package file
 COPY packages/frontend/package.json ./packages/frontend/
-RUN npm install -w frontend --omit=dev
+RUN npm install -w frontend
 
 # 2. Build the application
 FROM node:20-alpine AS builder

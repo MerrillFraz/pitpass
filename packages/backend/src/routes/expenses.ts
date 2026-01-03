@@ -16,12 +16,13 @@ router.get('/:tripId/expenses', async (req, res) => {
 router.post('/:tripId/expenses', async (req, res) => {
   const { tripId } = req.params;
   const { type, amount, date } = req.body;
+  const isoDate = new Date(date).toISOString();
   const expense = await prisma.expense.create({
     data: {
       tripId,
       type,
       amount,
-      date,
+      date: isoDate,
     },
   });
   res.json(expense);
