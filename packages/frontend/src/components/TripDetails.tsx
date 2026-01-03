@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
-import { useParams } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import AddExpenseForm from './AddExpenseForm';
 import AddNoteForm from './AddNoteForm';
 
@@ -46,6 +46,7 @@ function TripDetails() {
 
   return (
     <div>
+      <Link to="/" className="btn btn-link">Back to Trips</Link>
       <h2>{trip.name}</h2>
       <p>{new Date(trip.date).toLocaleDateString()} at {trip.location}</p>
 
