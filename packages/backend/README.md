@@ -1,6 +1,6 @@
 # Backend
 
-This is the backend for the Racing Expenses application. It's a Node.js application built with Express and TypeScript, and it uses Prisma as an ORM to interact with the PostgreSQL database.
+This is the backend for the PitPass application. It's a Node.js application built with Express and TypeScript, and it uses Prisma as an ORM to interact with the PostgreSQL database.
 
 ## API Endpoints
 
