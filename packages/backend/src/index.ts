@@ -2,11 +2,15 @@ import express, { Express, Request, Response } from 'express';
 import tripsRouter from './routes/trips';
 import expensesRouter from './routes/expenses';
 import notesRouter from './routes/notes';
+import cors from 'cors';
 
 const app: Express = express();
 const port = process.env.PORT || 3000;
 
 app.use(express.json());
+app.use(cors({
+  origin: 'http://localhost:8080'
+}));
 
 app.get('/', (req: Request, res: Response) => {
   res.send('Racing Expenses API');
