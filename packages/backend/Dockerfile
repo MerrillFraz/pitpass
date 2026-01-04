@@ -27,5 +27,7 @@ COPY --from=builder /usr/src/app/packages/backend/package.json ./packages/backen
 COPY --from=builder /usr/src/app/packages/backend/prisma ./packages/backend/prisma
 COPY --from=builder /usr/src/app/packages/backend/prisma.config.ts ./packages/backend/prisma.config.ts
 COPY --from=builder /usr/src/app/packages/backend/.env ./packages/backend/.env
+COPY packages/backend/docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 EXPOSE 3000
-CMD ["node", "dist/index.js"]
+CMD ["docker-entrypoint.sh"]
