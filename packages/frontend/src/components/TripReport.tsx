@@ -63,43 +63,56 @@ const TripReport: React.FC = () => {
     return <div className="p-4 text-red-500 text-center">Error: {error}</div>;
   }
 
+const sortedTrips = [...trips].sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+  const grandTotal = trips.reduce((total, trip) => total + (trip.expenses ?? []).reduce((tripTotal, expense) => tripTotal + expense.amount, 0), 0);
+
   return (
     <div className="p-4">
       <h1 className="text-2xl font-bold mb-4">Trip Reports</h1>
-      {(trips ?? []).length === 0 ? (
+      <div className="mb-4 text-xl font-bold">
+        Grand Total: ${grandTotal.toFixed(2)}
+      </div>
+      {sortedTrips.length === 0 ? (
         <p className="text-center">No trips found. Add some trips to see reports!</p>
       ) : (
         <div className="space-y-8">
-          {(trips ?? [])
-            .filter((trip) => trip != null) // Filter out null or undefined trip objects
+          {sortedTrips
             .map((trip) => {
             console.log('Processing Trip:', trip);
             console.log('Trip Expenses:', trip.expenses);
             console.log('Trip Notes:', trip.notes);
+            
+            const sortedExpenses = [...(trip.expenses ?? [])].sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+            const sortedNotes = [...(trip.notes ?? [])].sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+            const tripTotal = (trip.expenses ?? []).reduce((total, expense) => total + expense.amount, 0);
+
             return (
               <div key={trip.id} className="bg-white shadow rounded-lg p-6">
                 <h2 className="text-xl font-semibold mb-2">{trip.name}</h2>
                 <p className="text-gray-600 mb-1"><strong>Date:</strong> {new Date(trip.date).toLocaleDateString()}</p>
                 <p className="text-gray-600 mb-4"><strong>Location:</strong> {trip.location}</p>
 
-                {(trip.expenses ?? []).length > 0 && (
+                {sortedExpenses.length > 0 && (
                   <div className="mt-4">
                     <h3 className="text-lg font-medium mb-2">Expenses:</h3>
                     <ul className="list-disc list-inside ml-4">
-                      {(trip.expenses ?? []).map((expense) => (
+                      {sortedExpenses.map((expense) => (
                         <li key={expense.id} className="text-gray-700">
                           {new Date(expense.date).toLocaleDateString()} - {expense.type}: ${expense.amount.toFixed(2)}
                         </li>
                       ))}
                     </ul>
+                    <div className="mt-2 font-bold">
+                      Trip Total: ${tripTotal.toFixed(2)}
+                    </div>
                   </div>
                 )}
 
-                {(trip.notes ?? []).length > 0 && (
+                {sortedNotes.length > 0 && (
                   <div className="mt-4">
                     <h3 className="text-lg font-medium mb-2">Notes:</h3>
                     <ul className="list-disc list-inside ml-4">
-                      {(trip.notes ?? []).map((note) => (
+                      {sortedNotes.map((note) => (
                         <li key={note.id} className="text-gray-700">
                           {new Date(note.date).toLocaleDateString()} - {note.content}
                         </li>
@@ -108,7 +121,7 @@ const TripReport: React.FC = () => {
                   </div>
                 )}
 
-                {(trip.expenses ?? []).length === 0 && (trip.notes ?? []).length === 0 && (
+                {sortedExpenses.length === 0 && sortedNotes.length === 0 && (
                   <p className="text-gray-500 mt-4">No expenses or notes for this trip.</p>
                 )}
               </div>
