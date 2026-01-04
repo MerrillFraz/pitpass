@@ -1,6 +1,6 @@
 # Frontend
 
-This is the frontend for the Racing Expenses application. It's a React application built with Vite and TypeScript. It uses React Router for navigation and Bootstrap for styling.
+This is the frontend for the PitPass application. It's a React application built with Vite and TypeScript. It uses React Router for navigation and Bootstrap for styling.
 
 ## UI Components
 

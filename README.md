@@ -1,6 +1,6 @@
-# Racing Expenses App
+# PitPass
 
-This application is designed to help a race team track their expenses throughout a racing season. It allows logging trips, various types of expenses, notes, and receipts.
+The PitPass application is designed to help a race team track their expenses throughout a racing season. It allows logging trips, various types of expenses, notes, and receipts.
 
 ## Architecture
 
@@ -30,7 +30,7 @@ For more detailed information, please refer to the specific README files for eac
     ```
 2.  Navigate to the project directory:
     ```sh
-    cd racing-expenses-app
+    cd pitpass
     ```
 3.  Start the application using Docker Compose:
     ```sh
