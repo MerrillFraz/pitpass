@@ -1,0 +1,53 @@
+name: 'Terraform Infrastructure Deployment'
+
+on:
+  push:
+    branches:
+      - main  # Triggers deployment when you merge into main
+  pull_request:
+    branches:
+      - main  # Runs a 'plan' to preview changes during PRs
+
+permissions:
+  contents: 'read'
+  id-token: 'write' # Essential for Workload Identity Federation
+
+jobs:
+  terraform:
+    name: 'Terraform'
+    runs-on: ubuntu-latest
+    
+    # Environment variables to keep the code clean
+    env:
+      GOOGLE_PROJECT_ID: 'clean-sylph-483415-q7' # Replace with your alphanumeric project ID
+      WIF_PROVIDER: 'projects/551834006504/locations/global/workloadIdentityPools/github-pool/providers/github-provider'
+      SERVICE_ACCOUNT: 'terraform-deployer@clean-sylph-483415-q7.iam.gserviceaccount.com'
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # Modern keyless authentication for 2026
+      - name: Authenticate to Google Cloud
+        id: 'auth'
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ env.WIF_PROVIDER }}
+          service_account: ${{ env.SERVICE_ACCOUNT }}
+
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v3
+
+      - name: Terraform Init
+        run: terraform init
+
+      - name: Terraform Format Check
+        run: terraform fmt -check
+
+      - name: Terraform Plan
+        run: terraform plan -input=false
+
+      # Only run 'Apply' on pushes to the main branch
+      - name: Terraform Apply
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        run: terraform apply -auto-approve -input=false
