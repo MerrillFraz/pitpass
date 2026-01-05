@@ -50,7 +50,9 @@ COPY --from=builder /usr/src/app/packages/backend/package.json ./packages/backen
 
 # --- ENTRYPOINT ---
 COPY packages/backend/docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
+COPY packages/backend/docker-entrypoint-init.sh /usr/local/bin/docker-entrypoint-init.sh
 RUN chmod +x /usr/local/bin/docker-entrypoint.sh
+RUN chmod +x /usr/local/bin/docker-entrypoint-init.sh
 
 EXPOSE 3000
 CMD ["docker-entrypoint.sh"]
