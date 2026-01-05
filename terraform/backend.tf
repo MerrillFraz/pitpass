@@ -1,6 +1,6 @@
 terraform {
   backend "gcs" {
-    bucket = "your-gcs-bucket-name" # Replace with your actual GCS bucket name
+    bucket = "pitpass-tf-state" # Replace with your actual GCS bucket name
     prefix = "terraform/state"
   }
 }
