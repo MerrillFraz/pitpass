@@ -3,6 +3,8 @@
 
 generator client {
   provider = "prisma-client-js"
+  // Generate into the hidden .prisma folder instead of the public @prisma folder
+  output   = "../../../node_modules/.prisma/client"
 }
 
 datasource db {

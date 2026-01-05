@@ -1,4 +1,6 @@
 #!/bin/sh
+# Exit immediately if a command exits with a non-zero status
+set -e 
 
 # Wait for DB to be ready
 until nc -z db 5432; do
@@ -7,8 +9,8 @@ until nc -z db 5432; do
 done
 
 # Apply Prisma migrations
-  echo "DATABASE_URL: $DATABASE_URL"
-  npx prisma migrate deploy --config=./packages/backend/prisma.config.ts
+export DATABASE_URL="postgresql://user:password@db:5432/pitpass_db"
+npx prisma migrate deploy --config ./prisma.config.ts
 
 # Start the application
 node dist/index.js
