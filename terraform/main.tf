@@ -91,23 +91,26 @@ resource "google_compute_instance" "racing_app_vm" {
   # Using metadata_startup_script for the most reliable bootstrap on GCP
   metadata_startup_script = <<-EOF
     #!/bin/bash
-    # 1. Install Docker from official Ubuntu Repos (Standard for 2026)
+    # 1. REMOVE THE BROKEN FILE FROM PREVIOUS ATTEMPTS
+    rm -f /etc/apt/sources.list.d/docker.list
+
+    # 2. Install Docker from standard Ubuntu repos
     apt-get update
-    apt-get install -y docker.io docker-buildx-plugin docker-compose-plugin
+    # In Ubuntu 24.04, these are the correct package names
+    apt-get install -y docker.io docker-compose
     
-    # 2. Start and enable Docker
+    # 3. Start and enable Docker
     systemctl enable docker
     systemctl start docker
 
-    # 3. Authenticate to your specific us-east1 Registry
-    # Use the 'quiet' flag to prevent script hanging
+    # 4. Authenticate to your registry
     gcloud auth configure-docker us-east1-docker.pkg.dev --quiet
 
-    # 4. Setup app directory
+    # 5. Setup app directory
     mkdir -p /opt/pitpass
     cd /opt/pitpass
 
-    # 5. Create the docker-compose.yml on the VM
+    # 6. Create the docker-compose.yml
     cat <<DOCKER_COMPOSE > docker-compose.yml
     services:
       db:
@@ -126,6 +129,7 @@ resource "google_compute_instance" "racing_app_vm" {
           - db
         environment:
           DB_HOST: db
+          DATABASE_URL: postgresql://postgres:your_secure_password@db:5432/pitpass_db
 
       frontend:
         image: us-east1-docker.pkg.dev/${var.project_id}/pitpass-app/frontend:latest
@@ -136,8 +140,8 @@ resource "google_compute_instance" "racing_app_vm" {
       pitpass_data:
     DOCKER_COMPOSE
 
-    # 6. Launch the app using the modern command
-    docker compose up -d
+    # 7. Launch the app (Using the standard command for this package)
+    docker-compose up -d
   EOF
 
   service_account {
