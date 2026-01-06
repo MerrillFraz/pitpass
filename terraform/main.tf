@@ -144,7 +144,7 @@ resource "google_compute_instance" "racing_app_vm" {
   EOF
 
   service_account {
-    email  = "default"
+    email = "default"
     # This is the exact URL Google needs to authorize the VM
     scopes = ["https://www.googleapis.com/auth/cloud-platform"]
   }
