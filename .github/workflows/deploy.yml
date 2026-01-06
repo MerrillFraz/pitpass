@@ -41,24 +41,31 @@ jobs:
 
       - name: Build and Push Backend
         run: |
-          docker build ./packages/backend -t us-east1-docker.pkg.dev/${{ env.GOOGLE_PROJECT_ID }}/racing-app/backend:latest
-          docker push us-east1-docker.pkg.dev/${{ env.GOOGLE_PROJECT_ID }}/racing-app/backend:latest
+          # Build from the root (.) so we can include the prisma config, 
+          # but point to the specific Dockerfile inside the backend folder.
+          docker build -f ./packages/backend/Dockerfile . -t us-east1-docker.pkg.dev/${{ env.GOOGLE_PROJECT_ID }}/pitpass-app/backend:latest
+          docker push us-east1-docker.pkg.dev/${{ env.GOOGLE_PROJECT_ID }}/pitpass-app/backend:latest
 
       - name: Build and Push Frontend
         run: |
-          docker build ./packages/frontend -t us-east1-docker.pkg.dev/${{ env.GOOGLE_PROJECT_ID }}/racing-app/frontend:latest
-          docker push us-east1-docker.pkg.dev/${{ env.GOOGLE_PROJECT_ID }}/racing-app/frontend:latest
+          # Frontend likely doesn't need root files, but for consistency 
+          # we build from root as well.
+          docker build -f ./packages/frontend/Dockerfile . -t us-east1-docker.pkg.dev/${{ env.GOOGLE_PROJECT_ID }}/pitpass-app/frontend:latest
+          docker push us-east1-docker.pkg.dev/${{ env.GOOGLE_PROJECT_ID }}/pitpass-app/frontend:latest
+
 
       - name: Set up Terraform
         uses: hashicorp/setup-terraform@v3
 
       - name: Terraform Init
+        working-directory: ./terraform
         run: terraform init
 
       - name: Terraform Format Check
         run: terraform fmt -check
 
       - name: Terraform Plan
+        working-directory: ./terraform
         run: terraform plan -input=false
 
       # Only run 'Apply' on pushes to the main branch
