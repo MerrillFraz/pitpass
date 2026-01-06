@@ -109,8 +109,8 @@ resource "google_compute_instance" "racing_app_vm" {
         restart: always
         environment:
           POSTGRES_DB: pitpass_db
-          POSTGRES_USER: "${var.db_user}"
-          POSTGRES_PASSWORD: "${var.db_password}"
+          POSTGRES_USER: ${var.db_user}
+          POSTGRES_PASSWORD: ${var.db_password}
         volumes:
           - pitpass_data:/var/lib/postgresql/data
 
@@ -120,11 +120,7 @@ resource "google_compute_instance" "racing_app_vm" {
         depends_on:
           - db
         environment:
-          DB_HOST: "db"
-          DB_PORT: "5432"
-          DB_NAME: "pitpass_db"
-          DB_USER: "${var.db_user}"
-          DB_PASSWORD: "${var.db_password}"
+          DATABASE_URL: "postgresql://${var.db_user}:${var.db_password}@db:5432/pitpass_db"
 
       frontend:
         image: us-east1-docker.pkg.dev/${var.project_id}/pitpass-app/frontend:latest
@@ -134,10 +130,6 @@ resource "google_compute_instance" "racing_app_vm" {
     volumes:
       pitpass_data:
     DOCKER_COMPOSE
-
-    echo "--- Generated docker-compose.yml ---"
-    cat docker-compose.yml
-    echo "------------------------------------"
 
     # 7. Launch the app (Using the standard command for this package)
     docker-compose up -d
@@ -151,4 +143,3 @@ resource "google_compute_instance" "racing_app_vm" {
 
   deletion_protection = false
 }
-
