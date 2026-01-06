@@ -90,6 +90,7 @@ For faster iteration during development, you can run the frontend and backend se
         build:
           context: .
           dockerfile: ./packages/frontend/Dockerfile
+          target: builder # Use the builder stage for local development
         volumes:
           - ./packages/frontend/src:/usr/src/app/packages/frontend/src
           - ./packages/frontend/public:/usr/src/app/packages/frontend/public
