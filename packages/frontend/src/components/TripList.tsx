@@ -16,7 +16,8 @@ function TripList() {
   useEffect(() => {
     axios.get('/api/trips')
       .then(response => {
-        setTrips(response.data);
+        const tripsData = response.data.data || response.data;
+        setTrips(Array.isArray(tripsData) ? tripsData : []);
       })
       .catch(error => {
         console.error('Error fetching trips:', error);
