@@ -20,7 +20,7 @@ jobs:
     # Environment variables to keep the code clean
     env:
       GOOGLE_PROJECT_ID: 'clean-sylph-483415-q7' # Replace with your alphanumeric project ID
-      WIF_PROVIDER: 'projects/551834006504/locations/global/workloadIdentityPools/github-pool/providers/github-provider'
+      WIF_PROVIDER: 'projects/551834006504/locations/global/workloadIdentityPools/github-pool/providers/github'
       SERVICE_ACCOUNT: 'terraform-deployer@clean-sylph-483415-q7.iam.gserviceaccount.com'
 
     steps:
@@ -34,6 +34,7 @@ jobs:
         with:
           workload_identity_provider: ${{ env.WIF_PROVIDER }}
           service_account: ${{ env.SERVICE_ACCOUNT }}
+          audience: 'github.com'
 
       - name: Set up Terraform
         uses: hashicorp/setup-terraform@v3
