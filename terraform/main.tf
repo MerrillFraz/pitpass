@@ -118,7 +118,7 @@ resource "google_compute_instance" "racing_app_vm" {
         restart: always
         environment:
           POSTGRES_DB: pitpass_db
-          POSTGRES_PASSWORD: your_secure_password
+          POSTGRES_PASSWORD: password
         volumes:
           - pitpass_data:/var/lib/postgresql/data
 
@@ -129,7 +129,7 @@ resource "google_compute_instance" "racing_app_vm" {
           - db
         environment:
           DB_HOST: db
-          DATABASE_URL: postgresql://postgres:your_secure_password@db:5432/pitpass_db
+          DATABASE_URL: postgresql://user:password@db:5432/pitpass_db
 
       frontend:
         image: us-east1-docker.pkg.dev/${var.project_id}/pitpass-app/frontend:latest
