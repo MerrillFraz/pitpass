@@ -62,6 +62,7 @@ resource "google_compute_instance" "racing_app_vm" {
   name         = var.instance_name
   machine_type = var.machine_type
   tags         = ["pitpass-app-vm"]
+  allow_stopping_for_update = true
 
   boot_disk {
     initialize_params {
