@@ -54,16 +54,6 @@ resource "google_compute_firewall" "allow_https" {
   description   = "Allow HTTPS access to pitpass-app-vm"
 }
 
-# --- Cloud-init Configuration (User Data) ---
-
-# Use the templatefile function to render the cloud-config.yaml with variables
-data "template_file" "cloud_init_config" {
-  template = file("${path.module}/cloud-config.yaml")
-  vars = {
-    github_repo_url = var.github_repo_url
-  }
-}
-
 # --- Compute Engine Instance (Optimized for 2026) ---
 
 resource "google_compute_instance" "racing_app_vm" {
