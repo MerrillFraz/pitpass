@@ -33,7 +33,7 @@ variable "gcs_bucket_name" {
   type        = string
   default     = "pitpass-tf-state"
   # IMPORTANT: This must be globally unique. Choose a unique name before running `terraform init`.
-  # Example: "racing-app-tfstate-youruniqueid"
+  # Example: "pitpass-app-tfstate-youruniqueid"
 }
 
 variable "github_repo_url" {
