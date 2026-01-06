@@ -19,7 +19,7 @@ This milestone focuses on establishing a strong, relational database schema and 
 -   [ ] **API Refactoring:**
     -   [ ] Restructure all Express routes to be RESTful and nested logically (e.g., `/api/trips/:tripId/stops/:stopId/expenses`).
     -   [ ] Implement robust input validation (e.g., using `zod`) on all API endpoints. (In Progress - trips.ts)
-    -   [ ] Create a centralized error-handling middleware.
+    -   [x] Create a centralized error-handling middleware.
 -   [ ] **Configuration Management:**
     -   [ ] Externalize all secrets and configuration (database URL, API keys, JWT secret) using environment variables (`.env` file).
 
