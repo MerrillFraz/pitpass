@@ -1,11 +1,26 @@
 import { Router } from 'express';
 import prisma from '../prisma';
+import { validate } from '../middleware/validate';
+import { createTripSchema, updateTripSchema } from '../schemas/tripSchemas';
+import expensesRouter from './expenses';
+import notesRouter from './notes';
+import tripStopsRouter from './tripStops'; // Import tripStops router
 
 const router = Router();
 
+// Middleware to attach tripId to req for nested routes
+router.use('/:tripId', (req, res, next) => {
+  req.tripId = req.params.tripId;
+  next();
+});
+
+// Mount sub-routers
+router.use('/:tripId/expenses', expensesRouter);
+router.use('/:tripId/notes', notesRouter);
+router.use('/:tripId/stops', tripStopsRouter); // Mount tripStops router
+
 // GET all trips
 router.get('/', async (req, res) => {
-  try {
     const trips = await prisma.trip.findMany({
       include: {
         expenses: true,
@@ -13,15 +28,10 @@ router.get('/', async (req, res) => {
       },
     });
     res.json(trips);
-  } catch (error) {
-    console.error('Error fetching trips:', error);
-    res.status(500).json({ error: 'Internal Server Error' });
-  }
 });
 
 // GET a single trip by id
 router.get('/:id', async (req, res) => {
-  try {
     const { id } = req.params;
     const trip = await prisma.trip.findUnique({
       where: { id },
@@ -31,64 +41,47 @@ router.get('/:id', async (req, res) => {
       },
     });
     res.json(trip);
-  } catch (error) {
-    console.error(`Error fetching trip with ID ${req.params.id}:`, error);
-    res.status(500).json({ error: 'Internal Server Error' });
-  }
 });
 
 // POST a new trip
-router.post('/', async (req, res) => {
-  try {
-    const { name, date, location } = req.body;
-    const isoDate = new Date(date).toISOString();
+router.post('/', validate(createTripSchema), async (req, res) => {
+    const { name, date, location, userId, teamId } = req.body;
     const trip = await prisma.trip.create({
       data: {
         name,
-        date: isoDate,
+        date,
         location,
+        userId,
+        teamId,
       },
     });
-    res.json(trip);
-  } catch (error) {
-    console.error('Error creating trip:', error);
-    res.status(500).json({ error: 'Internal Server Error' });
-  }
+    res.status(201).json(trip);
 });
 
 // PUT (update) a trip
-router.put('/:id', async (req, res) => {
-  try {
+router.put('/:id', validate(updateTripSchema), async (req, res) => {
     const { id } = req.params;
-    const { name, date, location } = req.body;
-    const isoDate = new Date(date).toISOString();
+    const { name, date, location, userId, teamId } = req.body;
     const trip = await prisma.trip.update({
       where: { id },
       data: {
         name,
-        date: isoDate,
+        date,
         location,
+        userId,
+        teamId,
       },
     });
     res.json(trip);
-  } catch (error) {
-    console.error(`Error updating trip with ID ${req.params.id}:`, error);
-    res.status(500).json({ error: 'Internal Server Error' });
-  }
 });
 
 // DELETE a trip
 router.delete('/:id', async (req, res) => {
-  try {
     const { id } = req.params;
     await prisma.trip.delete({
       where: { id },
     });
-    res.json({ message: 'Trip deleted' });
-  } catch (error) {
-    console.error(`Error deleting trip with ID ${req.params.id}:`, error);
-    res.status(500).json({ error: 'Internal Server Error' });
-  }
+    res.status(204).json({ message: 'Trip deleted' });
 });
 
 export default router;
