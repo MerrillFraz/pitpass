@@ -16,7 +16,7 @@ resource "google_compute_network" "vpc_network" {
 resource "google_compute_firewall" "allow_ssh" {
   name    = "allow-ssh"
   network = google_compute_network.vpc_network.name
-  
+
   allow {
     protocol = "tcp"
     ports    = ["22"]
@@ -30,7 +30,7 @@ resource "google_compute_firewall" "allow_ssh" {
 resource "google_compute_firewall" "allow_http" {
   name    = "allow-http"
   network = google_compute_network.vpc_network.name
-  
+
   allow {
     protocol = "tcp"
     ports    = ["80"]
@@ -44,7 +44,7 @@ resource "google_compute_firewall" "allow_http" {
 resource "google_compute_firewall" "allow_https" {
   name    = "allow-https"
   network = google_compute_network.vpc_network.name
-  
+
   allow {
     protocol = "tcp"
     ports    = ["443"]
@@ -144,11 +144,11 @@ resource "google_compute_instance" "racing_app_vm" {
   EOF
 
   service_account {
-    email  = "default"
+    email = "default"
     # This scope is necessary for the VM to pull images from Artifact Registry
     scopes = ["www.googleapis.com"]
   }
 
-  deletion_protection = false 
+  deletion_protection = false
 }
 

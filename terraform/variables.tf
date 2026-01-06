@@ -40,5 +40,5 @@ variable "github_repo_url" {
   description = "URL of the GitHub repository to clone and run docker compose from."
   type        = string
   # Update this with the actual URL of your application's repository.
-  default     = "https://github.com/MerrillFraz/pitpass" 
+  default = "https://github.com/MerrillFraz/pitpass"
 }
