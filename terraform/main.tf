@@ -91,26 +91,23 @@ resource "google_compute_instance" "racing_app_vm" {
   # Using metadata_startup_script for the most reliable bootstrap on GCP
   metadata_startup_script = <<-EOF
     #!/bin/bash
-    # 1. Install Docker using the official Ubuntu repository
+    # 1. Install Docker from official Ubuntu Repos (Standard for 2026)
     apt-get update
-    apt-get install -y ca-certificates curl gnupg
-    install -m 0755 -d /etc/apt/keyrings
-    curl -fsSL download.docker.com | gpg --dearmor -o /etc/apt/keyrings/docker.gpg
-    chmod a+r /etc/apt/keyrings/docker.gpg
+    apt-get install -y docker.io docker-buildx-plugin docker-compose-plugin
+    
+    # 2. Start and enable Docker
+    systemctl enable docker
+    systemctl start docker
 
-    echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] download.docker.com $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null
-
-    apt-get update
-    apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
-
-    # 2. Authenticate to your specific us-east1 Registry
+    # 3. Authenticate to your specific us-east1 Registry
+    # Use the 'quiet' flag to prevent script hanging
     gcloud auth configure-docker us-east1-docker.pkg.dev --quiet
 
-    # 3. Setup app directory
+    # 4. Setup app directory
     mkdir -p /opt/pitpass
     cd /opt/pitpass
 
-    # 4. Create the docker-compose.yml on the VM
+    # 5. Create the docker-compose.yml on the VM
     cat <<DOCKER_COMPOSE > docker-compose.yml
     services:
       db:
@@ -139,7 +136,7 @@ resource "google_compute_instance" "racing_app_vm" {
       pitpass_data:
     DOCKER_COMPOSE
 
-    # 5. Launch the app (Note the modern 'docker compose' syntax)
+    # 6. Launch the app using the modern command
     docker compose up -d
   EOF
 
