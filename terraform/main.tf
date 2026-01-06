@@ -109,8 +109,8 @@ resource "google_compute_instance" "racing_app_vm" {
         restart: always
         environment:
           POSTGRES_DB: pitpass_db
-          POSTGRES_USER: ${var.db_user}
-          POSTGRES_PASSWORD: ${var.db_password}
+          POSTGRES_USER: "${var.db_user}"
+          POSTGRES_PASSWORD: "${var.db_password}"
         volumes:
           - pitpass_data:/var/lib/postgresql/data
 
