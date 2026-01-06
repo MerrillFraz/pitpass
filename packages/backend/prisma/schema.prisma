@@ -109,6 +109,7 @@ model Trip {
   location  String
   expenses  Expense[]
   notes     Note[]
+  tripStops TripStop[]
   userId    String
   user      User      @relation(fields: [userId], references: [id])
   teamId    String
