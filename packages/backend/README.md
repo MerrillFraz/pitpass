@@ -59,3 +59,11 @@ And an `enum` for `ExpenseType`.
     npm run dev
     ```
     The server will be running on `http://localhost:3000`.
+
+## Containerization
+
+The backend application is containerized using Docker. The `Dockerfile` in this directory defines a multi-stage build to create a small, optimized production image.
+
+### Entrypoint Script
+
+The `docker-entrypoint.sh` script is used as the entrypoint for the Docker container. This script waits for the database to be available and then automatically runs any pending database migrations using `prisma migrate deploy` before starting the application. This ensures that the database schema is always up-to-date when the application starts.
