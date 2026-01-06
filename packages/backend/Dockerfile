@@ -12,7 +12,8 @@ COPY packages/backend/package.json ./packages/backend/
 COPY packages/backend/prisma ./packages/backend/prisma
 
 # Install only what's needed for the backend workspace
-RUN npm install -w backend --omit=dev
+# REMOVE --omit=dev here so we get TypeScript types (@types/...)
+RUN npm install -w backend
 
 # 2. Build the application
 FROM node:20-alpine AS builder
@@ -30,6 +31,10 @@ RUN DATABASE_URL="postgresql://placeholder" npx prisma generate --schema=./packa
 
 # Build the backend package
 RUN npm run build -w backend
+
+# --- NEW STEP: Prune devDependencies before production ---
+# This keeps your final image small by removing @types/ and tsc
+RUN npm prune --omit=dev -w backend
 
 # 3. Production Runner
 FROM node:20-alpine AS runner
