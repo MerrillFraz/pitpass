@@ -17,7 +17,7 @@ This milestone focuses on establishing a strong, relational database schema and 
         -   `Car` has related maintenance and setup models.
         -   `RaceResult` is linked to a `TripStop` and a `Car`.
 -   [ ] **API Refactoring:**
-    -   [ ] Restructure all Express routes to be RESTful and nested logically (e.g., `/api/trips/:tripId/stops/:stopId/expenses`).
+    -   [ ] Restructure all Express routes to be RESTful and nested logically (In Progress - expenses and notes nested under trips).
     -   [ ] Implement robust input validation (e.g., using `zod`) on all API endpoints. (In Progress - trips.ts)
     -   [x] Create a centralized error-handling middleware.
 -   [ ] **Configuration Management:**
