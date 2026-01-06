@@ -58,6 +58,8 @@ COPY --from=builder /usr/src/app/packages/backend/prisma ./packages/backend/pris
 # --- DEPENDENCIES ---
 # Copy the node_modules which contains the generated Prisma Client
 COPY --from=builder /usr/src/app/node_modules ./node_modules
+# Copy the backend workspace's node_modules
+COPY --from=builder /usr/src/app/packages/backend/node_modules ./packages/backend/node_modules
 
 # --- SCRIPTS ---
 COPY packages/backend/docker-entrypoint.sh /usr/local/bin/
