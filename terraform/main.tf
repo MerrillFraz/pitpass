@@ -64,19 +64,20 @@ data "template_file" "cloud_init_config" {
   }
 }
 
-# --- Compute Engine Instance ---
+# --- Compute Engine Instance (Optimized for 2026) ---
 
 resource "google_compute_instance" "racing_app_vm" {
   project      = var.project_id
   zone         = var.zone
   name         = var.instance_name
-  machine_type = var.machine_type # e2-micro for Free Tier
+  machine_type = var.machine_type
   tags         = ["racing-app-vm"]
 
   boot_disk {
     initialize_params {
-      image = "debian-cloud/debian-11" # A common, lightweight OS
-      size  = 20                       # Default size for e2-micro is 10GB, using 20GB for safety
+      # Updated to Ubuntu 24.04 LTS (Noble Numbat)
+      image = "ubuntu-os-cloud/ubuntu-2404-lts-amd64"
+      size  = 20 # 20GB is well within the 30GB Free Tier limit
     }
   }
 
@@ -87,32 +88,67 @@ resource "google_compute_instance" "racing_app_vm" {
     }
   }
 
-  # Apply cloud-init script via user-data
-  metadata = {
-    user-data = data.template_file.cloud_init_config.rendered
-  }
+  # Using metadata_startup_script for the most reliable bootstrap on GCP
+  metadata_startup_script = <<-EOF
+    #!/bin/bash
+    # 1. Install Docker using the official Ubuntu repository
+    apt-get update
+    apt-get install -y ca-certificates curl gnupg
+    install -m 0755 -d /etc/apt/keyrings
+    curl -fsSL download.docker.com | gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+    chmod a+r /etc/apt/keyrings/docker.gpg
+
+    echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] download.docker.com $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null
+
+    apt-get update
+    apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+
+    # 2. Authenticate to your specific us-east1 Registry
+    gcloud auth configure-docker us-east1-docker.pkg.dev --quiet
+
+    # 3. Setup app directory
+    mkdir -p /opt/pitpass
+    cd /opt/pitpass
+
+    # 4. Create the docker-compose.yml on the VM
+    cat <<DOCKER_COMPOSE > docker-compose.yml
+    services:
+      db:
+        image: postgres:15-alpine
+        restart: always
+        environment:
+          POSTGRES_DB: pitpass_db
+          POSTGRES_PASSWORD: your_secure_password
+        volumes:
+          - pitpass_data:/var/lib/postgresql/data
+
+      backend:
+        image: us-east1-docker.pkg.dev/${var.project_id}/racing-app/backend:latest
+        restart: always
+        depends_on:
+          - db
+        environment:
+          DB_HOST: db
+
+      frontend:
+        image: us-east1-docker.pkg.dev/${var.project_id}/racing-app/frontend:latest
+        restart: always
+        ports:
+          - "80:80"
+    volumes:
+      pitpass_data:
+    DOCKER_COMPOSE
+
+    # 5. Launch the app (Note the modern 'docker compose' syntax)
+    docker compose up -d
+  EOF
 
   service_account {
-    # Grant minimal permissions required.
-    # The default Compute Engine service account usually has 'Editor' or 'Owner' role,
-    # which is too broad for production. For this skeleton, we'll use the default,
-    # but in a real-world scenario, create a dedicated service account with specific roles.
-    # Example roles: roles/logging.logWriter, roles/monitoring.metricWriter
-    email  = "default" # This refers to the default Compute Engine service account
-    scopes = ["cloud-platform"] # Broad scope for simplicity in a skeleton. Restrict in production.
+    email  = "default"
+    # This scope is necessary for the VM to pull images from Artifact Registry
+    scopes = ["www.googleapis.com"]
   }
 
-  # This block ensures that the instance is deleted when `terraform destroy` is run,
-  # even if it has a non-empty `gcs_bucket_name` variable defined.
-  # Remove or adjust for production environments where you might want disk persistence.
   deletion_protection = false 
-  
-  # For easy cloning:
-  # This entire main.tf, along with variables.tf and outputs.tf,
-  # is designed to be self-contained. To clone this environment,
-  # simply copy the 'terraform' directory, update the 'project_id',
-  # 'gcs_bucket_name', and 'github_repo_url' variables in 'variables.tf'
-  # (or override them via tfvars or CLI), and run 'terraform init', 'terraform plan', 'terraform apply'.
-  # The cloud-init script will automatically set up the Docker environment
-  # and deploy your application from the specified GitHub repository.
 }
+
