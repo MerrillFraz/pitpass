@@ -7,7 +7,7 @@ provider "google" {
 # --- Network Configuration ---
 
 resource "google_compute_network" "vpc_network" {
-  name                    = "racing-app-vpc"
+  name                    = "pitpass-app-vpc"
   auto_create_subnetworks = true # Creates a default subnet in each region
   description             = "VPC network for the Racing Expenses Application"
 }
@@ -22,8 +22,8 @@ resource "google_compute_firewall" "allow_ssh" {
     ports    = ["22"]
   }
   source_ranges = ["0.0.0.0/0"] # WARNING: Allows SSH from anywhere. Restrict in production.
-  target_tags   = ["racing-app-vm"]
-  description   = "Allow SSH access to racing-app-vm"
+  target_tags   = ["pitpass-app-vm"]
+  description   = "Allow SSH access to pitpass-app-vm"
 }
 
 # Firewall rule to allow HTTP (port 80)
@@ -36,8 +36,8 @@ resource "google_compute_firewall" "allow_http" {
     ports    = ["80"]
   }
   source_ranges = ["0.0.0.0/0"]
-  target_tags   = ["racing-app-vm"]
-  description   = "Allow HTTP access to racing-app-vm"
+  target_tags   = ["pitpass-app-vm"]
+  description   = "Allow HTTP access to pitpass-app-vm"
 }
 
 # Firewall rule to allow HTTPS (port 443)
@@ -50,8 +50,8 @@ resource "google_compute_firewall" "allow_https" {
     ports    = ["443"]
   }
   source_ranges = ["0.0.0.0/0"]
-  target_tags   = ["racing-app-vm"]
-  description   = "Allow HTTPS access to racing-app-vm"
+  target_tags   = ["pitpass-app-vm"]
+  description   = "Allow HTTPS access to pitpass-app-vm"
 }
 
 # --- Cloud-init Configuration (User Data) ---
@@ -71,7 +71,7 @@ resource "google_compute_instance" "racing_app_vm" {
   zone         = var.zone
   name         = var.instance_name
   machine_type = var.machine_type
-  tags         = ["racing-app-vm"]
+  tags         = ["pitpass-app-vm"]
 
   boot_disk {
     initialize_params {
@@ -123,7 +123,7 @@ resource "google_compute_instance" "racing_app_vm" {
           - pitpass_data:/var/lib/postgresql/data
 
       backend:
-        image: us-east1-docker.pkg.dev/${var.project_id}/racing-app/backend:latest
+        image: us-east1-docker.pkg.dev/${var.project_id}/pitpass-app/backend:latest
         restart: always
         depends_on:
           - db
@@ -131,7 +131,7 @@ resource "google_compute_instance" "racing_app_vm" {
           DB_HOST: db
 
       frontend:
-        image: us-east1-docker.pkg.dev/${var.project_id}/racing-app/frontend:latest
+        image: us-east1-docker.pkg.dev/${var.project_id}/pitpass-app/frontend:latest
         restart: always
         ports:
           - "80:80"
