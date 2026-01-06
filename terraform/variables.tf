@@ -42,3 +42,21 @@ variable "github_repo_url" {
   # Update this with the actual URL of your application's repository.
   default = "https://github.com/MerrillFraz/pitpass"
 }
+
+variable "database_url" {
+  description = "The connection string for the database."
+  type        = string
+  sensitive   = true
+}
+
+variable "db_password" {
+  description = "The password for the database."
+  type        = string
+  sensitive   = true
+}
+
+variable "db_user" {
+  description = "The username for the database."
+  type        = string
+  sensitive   = true
+}

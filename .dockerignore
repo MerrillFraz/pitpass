@@ -1,5 +1,21 @@
-node_modules
-terraform
+# Git and Node
 .git
-.github
+node_modules
+**/node_modules
+
+# IDE and OS files
 .vscode
+.idea
+.DS_Store
+Thumbs.db
+
+# Infra and workflow files
+.github
+terraform
+
+# Logs and environment files
+*.log
+.env*
+
+# Build artifacts
+**/dist
