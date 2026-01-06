@@ -1,0 +1,42 @@
+
+
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: ./packages/backend/Dockerfile
+    volumes:
+      - ./packages/backend/src:/usr/src/app/packages/backend/src
+      - ./packages/backend/package.json:/usr/src/app/packages/backend/package.json
+      - ./packages/backend/tsconfig.json:/usr/src/app/packages/backend/tsconfig.json
+      - backend_node_modules:/usr/src/app/node_modules # Named volume to persist node_modules
+    command: npm run dev -w backend
+    environment:
+      # Ensure development server binds to 0.0.0.0 inside container
+      HOST: 0.0.0.0
+
+  frontend:
+    build:
+      context: .
+      dockerfile: ./packages/frontend/Dockerfile
+      target: builder
+    volumes:
+      - ./packages/frontend/src:/usr/src/app/packages/frontend/src
+      - ./packages/frontend/public:/usr/src/app/packages/frontend/public
+      - ./packages/frontend/index.html:/usr/src/app/packages/frontend/index.html
+      - ./packages/frontend/vite.config.ts:/usr/src/app/packages/frontend/vite.config.ts
+      - ./packages/frontend/tsconfig.json:/usr/src/app/packages/frontend/tsconfig.json
+      - ./packages/frontend/tsconfig.app.json:/usr/src/app/packages/frontend/tsconfig.app.json
+      - ./packages/frontend/tsconfig.node.json:/usr/src/app/packages/frontend/tsconfig.node.json
+      - ./packages/frontend/package.json:/usr/src/app/packages/frontend/package.json
+      - frontend_node_modules:/usr/src/app/node_modules # Mount node_modules into the main app folder, not sub-package
+    command: npm run dev -w frontend -- --host 0.0.0.0
+    ports:
+      - "5173:5173" # Vite's default dev server port
+    environment:
+      # Point frontend to local backend for development
+      VITE_API_BASE_URL: http://backend:3000
+
+volumes:
+  backend_node_modules:
+  frontend_node_modules:
