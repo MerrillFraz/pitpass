@@ -2,7 +2,7 @@
 
 The goal of PitPass is to be the one-stop place for a racing team or owner to consolidate all of their racing events, expenses, and data to get a big-picture understanding of their racing operations.
 
-## Milestone 1: Core Data Model & API Foundation
+## Milestone 1: Core Data Model & API Foundation (Complete)
 
 This milestone focuses on establishing a strong, relational database schema and a clean API structure that can support future growth.
 
@@ -16,11 +16,11 @@ This milestone focuses on establishing a strong, relational database schema and 
         -   `Trip` has many `Expenses` and `Notes`.
         -   `Car` has related maintenance and setup models.
         -   `RaceResult` is linked to a `TripStop` and a `Car`.
--   [ ] **API Refactoring:**
+-   [x] **API Refactoring:**
     -   [x] Restructure all Express routes to be RESTful and nested logically (e.g., `/api/trips/:tripId/stops/:stopId/expenses`).
     -   [x] Implement robust input validation (e.g., using `zod`) on all API endpoints.
     -   [x] Create a centralized error-handling middleware.
--   [ ] **Configuration Management:**
+-   [x] **Configuration Management:**
     -   [x] Externalize all secrets and configuration (database URL, API keys, JWT secret) using environment variables (`.env` file).
 
 ## Milestone 2: Team and User Management
