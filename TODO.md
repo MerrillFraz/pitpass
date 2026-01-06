@@ -8,7 +8,7 @@ This milestone focuses on establishing a strong, relational database schema and 
 
 -   [ ] **Design Relational Schema:**
     -   [x] Define core models in `schema.prisma`: `Team`, `User`, `TeamMembership`, `Role`, `Car`, `Track`, `Trip`, `TripStop`, `Expense`, `Note`, `RaceResult`.
-    -   [ ] Establish relationships:
+    -   [x] Establish relationships:
         -   `User` can be in many `Teams` through `TeamMembership`.
         -   `TeamMembership` has one or more `Roles`. One role should be primary.
         -   `Team` has a one-to-many relationship with `Cars`.
