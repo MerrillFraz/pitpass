@@ -6,7 +6,7 @@ The goal of PitPass is to be the one-stop place for a racing team or owner to co
 
 This milestone focuses on establishing a strong, relational database schema and a clean API structure that can support future growth.
 
--   [ ] **Design Relational Schema:**
+-   [x] **Design Relational Schema:**
     -   [x] Define core models in `schema.prisma`: `Team`, `User`, `TeamMembership`, `Role`, `Car`, `Track`, `Trip`, `TripStop`, `Expense`, `Note`, `RaceResult`.
     -   [x] Establish relationships:
         -   `User` can be in many `Teams` through `TeamMembership`.
