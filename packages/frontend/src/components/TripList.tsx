@@ -17,7 +17,7 @@ function TripList() {
     axios.get('/api/trips')
       .then(response => {
         const tripsData = response.data.data || response.data;
-        setTrips(tripsData);
+        setTrips(Array.isArray(tripsData) ? tripsData : []);
       })
       .catch(error => {
         console.error('Error fetching trips:', error);
