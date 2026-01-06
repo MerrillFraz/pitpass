@@ -21,7 +21,7 @@ This milestone focuses on establishing a strong, relational database schema and 
     -   [x] Implement robust input validation (e.g., using `zod`) on all API endpoints.
     -   [x] Create a centralized error-handling middleware.
 -   [ ] **Configuration Management:**
-    -   [ ] Externalize all secrets and configuration (database URL, API keys, JWT secret) using environment variables (`.env` file).
+    -   [x] Externalize all secrets and configuration (database URL, API keys, JWT secret) using environment variables (`.env` file).
 
 ## Milestone 2: Team and User Management
 
