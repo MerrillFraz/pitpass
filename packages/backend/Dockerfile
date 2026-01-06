@@ -39,7 +39,7 @@ WORKDIR /usr/src/app
 ENV NODE_ENV=production
 
 # --- INFRASTRUCTURE ---
-# Copy root files needed for Prisma CLI resolution in production
+# Copy root files needed for npm install and Prisma CLI resolution in production
 COPY --from=builder /usr/src/app/package.json ./
 COPY --from=builder /usr/src/app/prisma.config.ts ./
 
@@ -51,10 +51,8 @@ COPY --from=builder /usr/src/app/packages/backend/package.json ./packages/backen
 COPY --from=builder /usr/src/app/packages/backend/prisma ./packages/backend/prisma
 
 # --- DEPENDENCIES ---
-# Copy the node_modules from the deps stage (all dependencies, including hoisted)
-COPY --from=deps /usr/src/app/node_modules ./node_modules
-# Prune devDependencies for the backend workspace in the runner stage
-RUN npm prune --omit=dev -w backend
+# Install only production dependencies for the entire monorepo
+RUN npm install --omit=dev
 
 # --- SCRIPTS ---
 COPY packages/backend/docker-entrypoint.sh /usr/local/bin/
