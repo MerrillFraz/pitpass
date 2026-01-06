@@ -6,6 +6,7 @@ import { createExpenseSchema, updateExpenseSchema } from '../schemas/expenseSche
 const router = Router({ mergeParams: true });
 
 // GET all expenses for a trip
+router.get('/', async (req, res) => {
   const tripId = req.tripId!; // Access tripId from merged params
   const expenses = await prisma.expense.findMany({
     where: { tripId },
