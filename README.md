@@ -63,7 +63,7 @@ For faster iteration during development, you can run the frontend and backend se
     ```
     DATABASE_URL="postgresql://user:password@db:5432/pitpass_db"
     ```
-    **Important**: This `.env` file is for local development only and should **NOT** be committed to version control. It is already ignored by `.gitignore`.
+    **Important**: This `.env` file is for local development only and should **NOT** be committed to version control. It is already ignored by `.gitignore`. The generic `user` and `password` credentials used here are specific to your local Docker Compose setup and **do not affect how your application behaves in production environments**. Production deployments typically use secure environment variables or dedicated secret management services for database credentials.
 
 2.  **Create `docker-compose.override.yml`:**
     Place the following content in a file named `docker-compose.override.yml` in the root directory of the project, alongside `docker-compose.yml`:
