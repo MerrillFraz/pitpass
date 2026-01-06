@@ -1,59 +1,66 @@
 # 1. Install dependencies
 FROM node:20-alpine AS deps
 WORKDIR /usr/src/app
+
+# Copy root manifests and backend manifests for workspace resolution
 COPY package.json package-lock.json* ./
+COPY prisma.config.ts ./ 
 COPY packages/backend/package.json ./packages/backend/
 
-# Prisma v7 looks for this in the current directory during install/generate
-COPY prisma.config.ts ./ 
+# Prisma v7 requires the schema to be present during some install phases 
+# depending on your engine settings
+COPY packages/backend/prisma ./packages/backend/prisma
 
+# Install only what's needed for the backend workspace
 RUN npm install -w backend --omit=dev
 
 # 2. Build the application
 FROM node:20-alpine AS builder
 WORKDIR /usr/src/app
 
-# Copy deps and source
+# Copy node_modules from deps stage
 COPY --from=deps /usr/src/app/node_modules ./node_modules
+# Copy all source files (leveraging .dockerignore to skip frontend/infra)
 COPY . . 
-# Ensure config is at root
-COPY prisma.config.ts ./ 
 
-# --- THE FIX ---
-# Run from root (no '-w backend').
-# This prevents the "double nesting" path error.
-# We still need the dummy DATABASE_URL for Prisma 7 validation.
-RUN DATABASE_URL="postgresql://placeholder" npx prisma generate
+# Generate Prisma Client 
+# We run this from root so it picks up prisma.config.ts
+# Using a placeholder URL to satisfy Prisma's build-time validation
+RUN DATABASE_URL="postgresql://placeholder" npx prisma generate --schema=./packages/backend/prisma/schema.prisma
 
-# Now build the backend (which uses the client we just generated)
+# Build the backend package
 RUN npm run build -w backend
 
-
-# 3. Run the application
+# 3. Production Runner
 FROM node:20-alpine AS runner
 WORKDIR /usr/src/app
 
-# --- CRITICAL MISSING PIECE ---
-# Prisma CLI needs the root package.json to resolve the project structure
-COPY --from=builder /usr/src/app/package.json ./
+# Set production environment
+ENV NODE_ENV=production
 
-# --- CONFIG AND SCHEMA ---
-# Copy the config to the root so the CLI finds it automatically
+# --- INFRASTRUCTURE ---
+# Copy root files needed for Prisma CLI resolution in production
+COPY --from=builder /usr/src/app/package.json ./
 COPY --from=builder /usr/src/app/prisma.config.ts ./
-# Copy the schema and migrations (needed for migrate deploy)
+
+# --- BACKEND ASSETS ---
+# Copy the compiled code and its specific package.json
+COPY --from=builder /usr/src/app/packages/backend/dist ./packages/backend/dist
+COPY --from=builder /usr/src/app/packages/backend/package.json ./packages/backend/package.json
+# Copy the schema for runtime migrations (prisma migrate deploy)
 COPY --from=builder /usr/src/app/packages/backend/prisma ./packages/backend/prisma
 
-# --- APP ASSETS ---
-COPY --from=builder /usr/src/app/packages/backend/dist ./dist
+# --- DEPENDENCIES ---
+# Copy the node_modules which contains the generated Prisma Client
 COPY --from=builder /usr/src/app/node_modules ./node_modules
-COPY --from=builder /usr/src/app/packages/backend/package.json ./packages/backend/package.json
 
-# --- ENTRYPOINT ---
-COPY packages/backend/docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
-COPY packages/backend/docker-entrypoint-init.sh /usr/local/bin/docker-entrypoint-init.sh
+# --- SCRIPTS ---
+COPY packages/backend/docker-entrypoint.sh /usr/local/bin/
 RUN chmod +x /usr/local/bin/docker-entrypoint.sh
-RUN chmod +x /usr/local/bin/docker-entrypoint-init.sh
 
 EXPOSE 3000
-CMD ["docker-entrypoint.sh"]
 
+# Ensure the entrypoint knows where the app starts
+WORKDIR /usr/src/app/packages/backend
+ENTRYPOINT ["docker-entrypoint.sh"]
+CMD ["node", "dist/main.js"]
