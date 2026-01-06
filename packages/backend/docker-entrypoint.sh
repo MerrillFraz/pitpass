@@ -1,4 +1,7 @@
 #!/bin/sh
+echo "--- Backend Entrypoint Environment ---"
+printenv
+echo "------------------------------------"
 set -e 
 
 # Construct the database URL from individual environment variables

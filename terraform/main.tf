@@ -135,6 +135,10 @@ resource "google_compute_instance" "racing_app_vm" {
       pitpass_data:
     DOCKER_COMPOSE
 
+    echo "--- Generated docker-compose.yml ---"
+    cat docker-compose.yml
+    echo "------------------------------------"
+
     # 7. Launch the app (Using the standard command for this package)
     docker-compose up -d
   EOF
