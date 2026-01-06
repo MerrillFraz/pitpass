@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import { ZodError } from 'zod';
 
-const errorHandler = (err: any, req: Request, res: Response, next: NextFunction) => {
+const errorHandler = (err: Error, req: Request, res: Response, next: NextFunction) => {
   console.error(err); // Log the error for debugging purposes
 
   // Handle Zod validation errors
@@ -9,15 +9,15 @@ const errorHandler = (err: any, req: Request, res: Response, next: NextFunction)
     return res.status(400).json({
       status: 'fail',
       message: 'Validation error',
-      errors: err.errors.map(error => ({
-        path: error.path,
-        message: error.message,
+      errors: err.issues.map(issue => ({ // Changed err.errors to err.issues
+        path: issue.path,
+        message: issue.message,
       })),
     });
   }
 
   // Handle Prisma errors (example - you might want to differentiate more)
-  if (err.code && err.code.startsWith('P')) { // Prisma Client errors start with 'P'
+  if ((err as any).code && (err as any).code.startsWith('P')) { // Cast to any to access 'code'
     return res.status(400).json({
       status: 'fail',
       message: 'Database error',
@@ -26,7 +26,7 @@ const errorHandler = (err: any, req: Request, res: Response, next: NextFunction)
   }
 
   // Generic error handling
-  res.status(err.statusCode || 500).json({
+  res.status((err as any).statusCode || 500).json({ // Cast to any to access 'statusCode'
     status: 'error',
     message: err.message || 'Internal Server Error',
   });

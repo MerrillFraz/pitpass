@@ -7,7 +7,7 @@ const router = Router({ mergeParams: true });
 
 // GET all notes for a trip
 router.get('/', async (req, res) => {
-  const tripId = req.tripId; // Access tripId from merged params
+  const tripId = req.tripId!; // Access tripId from merged params
   const notes = await prisma.note.findMany({
     where: { tripId },
   });
@@ -16,7 +16,7 @@ router.get('/', async (req, res) => {
 
 // POST a new note for a trip
 router.post('/', validate(createNoteSchema), async (req, res) => {
-  const tripId = req.tripId; // Access tripId from merged params
+  const tripId = req.tripId!; // Access tripId from merged params
   const { content, date } = req.body;
   const note = await prisma.note.create({
     data: {
@@ -31,7 +31,7 @@ router.post('/', validate(createNoteSchema), async (req, res) => {
 // PUT (update) a note
 router.put('/:id', validate(updateNoteSchema), async (req, res) => {
   const { id } = req.params;
-  const tripId = req.tripId; // Access tripId from merged params
+  const tripId = req.tripId!; // Access tripId from merged params
   const { content, date } = req.body;
   const note = await prisma.note.update({
     where: { id, tripId }, // Ensure note belongs to the trip
@@ -46,7 +46,7 @@ router.put('/:id', validate(updateNoteSchema), async (req, res) => {
 // DELETE a note
 router.delete('/:id', async (req, res) => {
   const { id } = req.params;
-  const tripId = req.tripId; // Access tripId from merged params
+  const tripId = req.tripId!; // Access tripId from merged params
   await prisma.note.delete({
     where: { id, tripId }, // Ensure note belongs to the trip
   });
