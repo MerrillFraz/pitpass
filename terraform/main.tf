@@ -120,7 +120,11 @@ resource "google_compute_instance" "racing_app_vm" {
         depends_on:
           - db
         environment:
-          DATABASE_URL: "postgresql://${var.db_user}:${var.db_password}@db:5432/pitpass_db"
+          DB_HOST: "db"
+          DB_PORT: "5432"
+          DB_NAME: "pitpass_db"
+          DB_USER: "${var.db_user}"
+          DB_PASSWORD: "${var.db_password}"
 
       frontend:
         image: us-east1-docker.pkg.dev/${var.project_id}/pitpass-app/frontend:latest
