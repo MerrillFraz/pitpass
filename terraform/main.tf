@@ -57,11 +57,11 @@ resource "google_compute_firewall" "allow_https" {
 # --- Compute Engine Instance (Optimized for 2026) ---
 
 resource "google_compute_instance" "racing_app_vm" {
-  project      = var.project_id
-  zone         = var.zone
-  name         = var.instance_name
-  machine_type = var.machine_type
-  tags         = ["pitpass-app-vm"]
+  project                   = var.project_id
+  zone                      = var.zone
+  name                      = var.instance_name
+  machine_type              = var.machine_type
+  tags                      = ["pitpass-app-vm"]
   allow_stopping_for_update = true
 
   boot_disk {
