@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
-import { AnyZodObject, ZodError } from 'zod';
+import { z, ZodError } from 'zod';
 
-export const validate = (schema: AnyZodObject) =>
+export const validate = (schema: z.AnyZodObject) => // Changed AnyZodObject to z.AnyZodObject
   (req: Request, res: Response, next: NextFunction) => {
     try {
       schema.parse({
@@ -14,7 +14,10 @@ export const validate = (schema: AnyZodObject) =>
       if (error instanceof ZodError) {
         return res.status(400).json({
           status: 'fail',
-          errors: error.errors,
+          errors: error.issues.map(issue => ({ // Changed error.errors to error.issues
+            path: issue.path,
+            message: issue.message,
+          })),
         });
       }
       next(error);

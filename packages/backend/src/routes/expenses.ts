@@ -6,8 +6,7 @@ import { createExpenseSchema, updateExpenseSchema } from '../schemas/expenseSche
 const router = Router({ mergeParams: true });
 
 // GET all expenses for a trip
-router.get('/', async (req, res) => {
-  const tripId = req.tripId; // Access tripId from merged params
+  const tripId = req.tripId!; // Access tripId from merged params
   const expenses = await prisma.expense.findMany({
     where: { tripId },
   });
@@ -16,7 +15,7 @@ router.get('/', async (req, res) => {
 
 // POST a new expense for a trip
 router.post('/', validate(createExpenseSchema), async (req, res) => {
-  const tripId = req.tripId; // Access tripId from merged params
+  const tripId = req.tripId!; // Access tripId from merged params
   const { type, amount, date } = req.body;
   const expense = await prisma.expense.create({
     data: {
@@ -32,7 +31,7 @@ router.post('/', validate(createExpenseSchema), async (req, res) => {
 // PUT (update) an expense
 router.put('/:id', validate(updateExpenseSchema), async (req, res) => {
   const { id } = req.params;
-  const tripId = req.tripId; // Access tripId from merged params
+  const tripId = req.tripId!; // Access tripId from merged params
   const { type, amount, date } = req.body;
   const expense = await prisma.expense.update({
     where: { id, tripId }, // Ensure expense belongs to the trip
@@ -48,7 +47,7 @@ router.put('/:id', validate(updateExpenseSchema), async (req, res) => {
 // DELETE an expense
 router.delete('/:id', async (req, res) => {
   const { id } = req.params;
-  const tripId = req.tripId; // Access tripId from merged params
+  const tripId = req.tripId!; // Access tripId from merged params
   await prisma.expense.delete({
     where: { id, tripId }, // Ensure expense belongs to the trip
   });

@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import prisma from '../../prisma';
+import prisma from '../prisma';
 import { validate } from '../middleware/validate';
 import { createTripStopSchema, updateTripStopSchema } from '../schemas/tripStopSchemas';
 import raceResultsRouter from './raceResults'; // Import raceResults router
@@ -17,7 +17,7 @@ router.use('/:stopId/results', raceResultsRouter);
 
 // GET all trip stops for a trip
 router.get('/', async (req, res) => {
-  const tripId = req.tripId;
+  const tripId = req.tripId!;
   const tripStops = await prisma.tripStop.findMany({
     where: { tripId },
   });
@@ -27,7 +27,7 @@ router.get('/', async (req, res) => {
 // GET a single trip stop by id
 router.get('/:id', async (req, res) => {
   const { id } = req.params;
-  const tripId = req.tripId;
+  const tripId = req.tripId!;
   const tripStop = await prisma.tripStop.findUnique({
     where: { id, tripId },
   });
@@ -36,7 +36,7 @@ router.get('/:id', async (req, res) => {
 
 // POST a new trip stop for a trip
 router.post('/', validate(createTripStopSchema), async (req, res) => {
-  const tripId = req.tripId;
+  const tripId = req.tripId!;
   const { trackId, startDate, endDate } = req.body;
   const tripStop = await prisma.tripStop.create({
     data: {
@@ -52,7 +52,7 @@ router.post('/', validate(createTripStopSchema), async (req, res) => {
 // PUT (update) a trip stop
 router.put('/:id', validate(updateTripStopSchema), async (req, res) => {
   const { id } = req.params;
-  const tripId = req.tripId;
+  const tripId = req.tripId!;
   const { trackId, startDate, endDate } = req.body;
   const tripStop = await prisma.tripStop.update({
     where: { id, tripId },
@@ -68,7 +68,7 @@ router.put('/:id', validate(updateTripStopSchema), async (req, res) => {
 // DELETE a trip stop
 router.delete('/:id', async (req, res) => {
   const { id } = req.params;
-  const tripId = req.tripId;
+  const tripId = req.tripId!;
   await prisma.tripStop.delete({
     where: { id, tripId },
   });
