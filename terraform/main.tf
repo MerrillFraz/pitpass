@@ -144,9 +144,9 @@ resource "google_compute_instance" "racing_app_vm" {
   EOF
 
   service_account {
-    email = "default"
-    # This scope is necessary for the VM to pull images from Artifact Registry
-    scopes = ["www.googleapis.com"]
+    email  = "default"
+    # This is the exact URL Google needs to authorize the VM
+    scopes = ["https://www.googleapis.com/auth/cloud-platform"]
   }
 
   deletion_protection = false
