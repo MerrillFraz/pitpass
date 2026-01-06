@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import { z, ZodError } from 'zod';
 
-export const validate = (schema: z.AnyZodObject) => // Changed AnyZodObject to z.AnyZodObject
+export const validate = (schema: z.ZodSchema<any>) => // Changed AnyZodObject to z.AnyZodObject
   (req: Request, res: Response, next: NextFunction) => {
     try {
       schema.parse({
