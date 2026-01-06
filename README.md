@@ -57,7 +57,15 @@ When the application is deployed to the cloud, database migrations are automatic
 
 For faster iteration during development, you can run the frontend and backend services in development mode using a `docker-compose.override.yml` file. This setup enables hot-reloading for the frontend and automatic restarts for the backend on code changes.
 
-1.  **Create `docker-compose.override.yml`:**
+1.  **Create `.env` file for the Backend:**
+    The backend service requires an `.env` file for database connection. Create a file named `.env` inside `packages/backend/` with the following content:
+
+    ```
+    DATABASE_URL="postgresql://user:password@db:5432/pitpass_db"
+    ```
+    **Important**: This `.env` file is for local development only and should **NOT** be committed to version control. It is already ignored by `.gitignore`.
+
+2.  **Create `docker-compose.override.yml`:**
     Place the following content in a file named `docker-compose.override.yml` in the root directory of the project, alongside `docker-compose.yml`:
 
     ```yaml
