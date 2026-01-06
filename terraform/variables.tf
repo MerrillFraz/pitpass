@@ -43,12 +43,6 @@ variable "github_repo_url" {
   default = "https://github.com/MerrillFraz/pitpass"
 }
 
-variable "database_url" {
-  description = "The connection string for the database."
-  type        = string
-  sensitive   = true
-}
-
 variable "db_password" {
   description = "The password for the database."
   type        = string
