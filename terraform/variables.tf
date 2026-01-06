@@ -1,6 +1,7 @@
 variable "project_id" {
   description = "The GCP project ID."
   type        = string
+  default     = "clean-sylph-483415-q7"
 }
 
 variable "region" {
@@ -18,7 +19,7 @@ variable "zone" {
 variable "instance_name" {
   description = "Name for the GCE instance."
   type        = string
-  default     = "racing-app-vm"
+  default     = "pitpass-app-vm"
 }
 
 variable "machine_type" {
@@ -30,6 +31,7 @@ variable "machine_type" {
 variable "gcs_bucket_name" {
   description = "Name of the GCS bucket for Terraform state."
   type        = string
+  default     = "pitpass-tf-state"
   # IMPORTANT: This must be globally unique. Choose a unique name before running `terraform init`.
   # Example: "racing-app-tfstate-youruniqueid"
 }
@@ -38,5 +40,5 @@ variable "github_repo_url" {
   description = "URL of the GitHub repository to clone and run docker compose from."
   type        = string
   # Update this with the actual URL of your application's repository.
-  default     = "https://github.com/your-username/racing-expenses-app.git" 
+  default     = "https://github.com/MerrillFraz/pitpass" 
 }
