@@ -18,6 +18,8 @@ services:
       dockerfile: ./packages/frontend/Dockerfile
     ports:
       - "8080:80"
+    depends_on:
+      - backend
 
   db:
     image: postgres:15-alpine
