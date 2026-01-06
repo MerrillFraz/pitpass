@@ -41,8 +41,13 @@ jobs:
 
       - name: Build and Push Backend
         run: |
-          docker build ./backend -t us-east1-docker.pkg.dev/${{ env.GOOGLE_PROJECT_ID }}/racing-app/backend:latest
+          docker build ./packages/backend -t us-east1-docker.pkg.dev/${{ env.GOOGLE_PROJECT_ID }}/racing-app/backend:latest
           docker push us-east1-docker.pkg.dev/${{ env.GOOGLE_PROJECT_ID }}/racing-app/backend:latest
+
+      - name: Build and Push Frontend
+        run: |
+          docker build ./packages/frontend -t us-east1-docker.pkg.dev/${{ env.GOOGLE_PROJECT_ID }}/racing-app/frontend:latest
+          docker push us-east1-docker.pkg.dev/${{ env.GOOGLE_PROJECT_ID }}/racing-app/frontend:latest
 
       - name: Set up Terraform
         uses: hashicorp/setup-terraform@v3
