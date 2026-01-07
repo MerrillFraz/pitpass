@@ -1,17 +1,20 @@
 #!/bin/sh
-set -e 
+# This script ensures the database is ready, migrated, and seeded before starting the main application.
 
-until nc -z db 5432; do
-  echo 'Waiting for Postgres...'
-  sleep 1
-done
+# Exit immediately if a command exits with a non-zero status.
+set -e
 
-echo 'Applying database migrations...'
-# Move to root where prisma.config.ts lives to run the migration and then execute the app from root
-cd /usr/src/app
+# The `backend` service in docker-compose depends on the `db` service with a healthcheck,
+# so we don't need to manually wait for the database here.
+
+echo "Running database migrations..."
 npx prisma migrate deploy
 
-echo 'Generating Prisma Client...'
-npx prisma generate --schema=./packages/backend/prisma/schema.prisma
+echo "Generating Prisma Client..."
+npx prisma generate
 
-exec node packages/backend/dist/index.js
+echo "Seeding database..."
+npx prisma db seed
+
+# Finally, execute the command passed to this script (the Dockerfile's CMD)
+exec "$@"
