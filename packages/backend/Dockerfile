@@ -12,7 +12,7 @@ COPY packages/backend/package.json ./packages/backend/
 COPY packages/backend/prisma ./packages/backend/prisma
 
 # Install ALL dependencies (root and workspaces)
-RUN npm install
+RUN npm install --include=dev
 
 # 2. Build the application
 FROM node:20-alpine AS builder
@@ -39,33 +39,33 @@ CMD ["bash"]
 FROM node:20-alpine AS runner
 WORKDIR /usr/src/app
 
+RUN apk add --no-cache curl dos2unix
+
 # Set production environment
 ENV NODE_ENV=production
 
 # --- INFRASTRUCTURE ---
-# Copy root package.json and package-lock.json for production dependency installation
+# Copy package manifests for workspace context and for npx to work correctly
 COPY --from=deps /usr/src/app/package.json ./
 COPY --from=deps /usr/src/app/package-lock.json* ./
+COPY --from=builder /usr/src/app/packages/backend/package.json ./packages/backend/package.json
 COPY --from=builder /usr/src/app/prisma.config.ts ./
+
+# --- DEPENDENCIES ---
+# Copy the entire pre-installed node_modules directory from the 'deps' stage
+COPY --from=deps /usr/src/app/node_modules ./node_modules
 
 # --- BACKEND ASSETS ---
 # Copy the compiled code and its specific package.json
 COPY --from=builder /usr/src/app/packages/backend/dist ./packages/backend/dist
-COPY --from=builder /usr/src/app/packages/backend/package.json ./packages/backend/package.json
 # Copy the schema for runtime migrations (prisma migrate deploy)
 COPY --from=builder /usr/src/app/packages/backend/prisma ./packages/backend/prisma
 
-# --- DEPENDENCIES ---
-# Install all dependencies (production and development) to ensure Prisma CLI is available for runtime generation
-RUN npm install
-
 # --- SCRIPTS ---
 COPY packages/backend/docker-entrypoint.sh /usr/local/bin/
-RUN chmod +x /usr/local/bin/docker-entrypoint.sh
+RUN dos2unix /usr/local/bin/docker-entrypoint.sh && chmod +x /usr/local/bin/docker-entrypoint.sh
 
-EXPOSE 3000
-
-# Ensure the entrypoint knows where the app starts
+# --- STARTUP ---
 WORKDIR /usr/src/app
 ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]
 CMD ["node", "packages/backend/dist/index.js"]
