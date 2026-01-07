@@ -31,6 +31,10 @@ RUN DATABASE_URL="postgresql://placeholder" npx prisma generate --schema=./packa
 # Build the backend package
 RUN npm run build -w backend
 
+# Debug stage for builder
+FROM builder AS builder-debug
+CMD ["bash"]
+
 # 3. Production Runner
 FROM node:20-alpine AS runner
 WORKDIR /usr/src/app
@@ -39,8 +43,9 @@ WORKDIR /usr/src/app
 ENV NODE_ENV=production
 
 # --- INFRASTRUCTURE ---
-# Copy root files needed for npm install and Prisma CLI resolution in production
-COPY --from=builder /usr/src/app/package.json ./
+# Copy root package.json and package-lock.json for production dependency installation
+COPY --from=deps /usr/src/app/package.json ./
+COPY --from=deps /usr/src/app/package-lock.json* ./
 COPY --from=builder /usr/src/app/prisma.config.ts ./
 
 # --- BACKEND ASSETS ---
@@ -51,8 +56,8 @@ COPY --from=builder /usr/src/app/packages/backend/package.json ./packages/backen
 COPY --from=builder /usr/src/app/packages/backend/prisma ./packages/backend/prisma
 
 # --- DEPENDENCIES ---
-# Install only production dependencies for the entire monorepo
-RUN npm install --omit=dev
+# Install all dependencies (production and development) to ensure Prisma CLI is available for runtime generation
+RUN npm install
 
 # --- SCRIPTS ---
 COPY packages/backend/docker-entrypoint.sh /usr/local/bin/
@@ -61,6 +66,7 @@ RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 EXPOSE 3000
 
 # Ensure the entrypoint knows where the app starts
-WORKDIR /usr/src/app/packages/backend
-ENTRYPOINT ["docker-entrypoint.sh"]
-CMD ["node", "dist/main.js"]
+WORKDIR /usr/src/app
+ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]
+CMD ["node", "packages/backend/dist/index.js"]
+
