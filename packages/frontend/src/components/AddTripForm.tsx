@@ -6,6 +6,12 @@ function AddTripForm() {
   const [date, setDate] = useState('');
   const [location, setLocation] = useState('');
 
+  const handleSetToday = () => {
+    const today = new Date();
+    const formattedDate = today.toISOString().split('T')[0]; // YYYY-MM-DD
+    setDate(formattedDate);
+  };
+
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
     axios.post('/api/trips', { name, date, location })
@@ -29,7 +35,10 @@ function AddTripForm() {
           </div>
           <div className="mb-3">
             <label htmlFor="date" className="form-label">Date</label>
-            <input type="date" className="form-control" id="date" value={date} onChange={e => setDate(e.target.value)} />
+            <div className="input-group">
+              <input type="date" className="form-control" id="date" value={date} onChange={e => setDate(e.target.value)} />
+              <button className="btn btn-outline-secondary" type="button" onClick={handleSetToday}>Today</button>
+            </div>
           </div>
           <div className="mb-3">
             <label htmlFor="location" className="form-label">Location</label>

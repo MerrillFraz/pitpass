@@ -11,15 +11,14 @@ COPY packages/backend/package.json ./packages/backend/
 # depending on your engine settings
 COPY packages/backend/prisma ./packages/backend/prisma
 
-# Install only what's needed for the backend workspace
-# REMOVE --omit=dev here so we get TypeScript types (@types/...)
-RUN npm install -w backend
+# Install ALL dependencies (root and workspaces)
+RUN npm install --include=dev
 
 # 2. Build the application
 FROM node:20-alpine AS builder
 WORKDIR /usr/src/app
 
-# Copy node_modules from deps stage
+# Copy node_modules from deps stage (all dependencies)
 COPY --from=deps /usr/src/app/node_modules ./node_modules
 # Copy all source files (leveraging .dockerignore to skip frontend/infra)
 COPY . . 
@@ -32,40 +31,42 @@ RUN DATABASE_URL="postgresql://placeholder" npx prisma generate --schema=./packa
 # Build the backend package
 RUN npm run build -w backend
 
-# --- NEW STEP: Prune devDependencies before production ---
-# This keeps your final image small by removing @types/ and tsc
-RUN npm prune --omit=dev -w backend
+# Debug stage for builder
+FROM builder AS builder-debug
+CMD ["bash"]
 
 # 3. Production Runner
 FROM node:20-alpine AS runner
 WORKDIR /usr/src/app
 
+RUN apk add --no-cache curl dos2unix
+
 # Set production environment
 ENV NODE_ENV=production
 
 # --- INFRASTRUCTURE ---
-# Copy root files needed for Prisma CLI resolution in production
-COPY --from=builder /usr/src/app/package.json ./
+# Copy package manifests for workspace context and for npx to work correctly
+COPY --from=deps /usr/src/app/package.json ./
+COPY --from=deps /usr/src/app/package-lock.json* ./
+COPY --from=builder /usr/src/app/packages/backend/package.json ./packages/backend/package.json
 COPY --from=builder /usr/src/app/prisma.config.ts ./
+
+# --- DEPENDENCIES ---
+# Copy the entire pre-installed node_modules directory from the 'deps' stage
+COPY --from=deps /usr/src/app/node_modules ./node_modules
 
 # --- BACKEND ASSETS ---
 # Copy the compiled code and its specific package.json
 COPY --from=builder /usr/src/app/packages/backend/dist ./packages/backend/dist
-COPY --from=builder /usr/src/app/packages/backend/package.json ./packages/backend/package.json
 # Copy the schema for runtime migrations (prisma migrate deploy)
 COPY --from=builder /usr/src/app/packages/backend/prisma ./packages/backend/prisma
 
-# --- DEPENDENCIES ---
-# Copy the node_modules which contains the generated Prisma Client
-COPY --from=builder /usr/src/app/node_modules ./node_modules
-
 # --- SCRIPTS ---
 COPY packages/backend/docker-entrypoint.sh /usr/local/bin/
-RUN chmod +x /usr/local/bin/docker-entrypoint.sh
+RUN dos2unix /usr/local/bin/docker-entrypoint.sh && chmod +x /usr/local/bin/docker-entrypoint.sh
 
-EXPOSE 3000
+# --- STARTUP ---
+WORKDIR /usr/src/app
+ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]
+CMD ["node", "packages/backend/dist/index.js"]
 
-# Ensure the entrypoint knows where the app starts
-WORKDIR /usr/src/app/packages/backend
-ENTRYPOINT ["docker-entrypoint.sh"]
-CMD ["node", "dist/main.js"]
