@@ -5,7 +5,7 @@
     "useDefineForClassFields": true,
     "lib": ["ES2022", "DOM", "DOM.Iterable"],
     "module": "ESNext",
-    "types": ["vite/client", "vitest", "vitest/globals", "@testing-library/jest-dom/extend-expect"],
+    "types": ["vite/client", "vitest", "vitest/globals"],
     "skipLibCheck": true,
 
     /* Bundler mode */
@@ -15,15 +15,6 @@
     "moduleDetection": "force",
     "noEmit": true,
     "jsx": "react-jsx",
-
-    /* Paths to resolve modules that tsc has trouble with */
-    "baseUrl": ".",
-    "paths": {
-      "vitest": ["./node_modules/vitest"],
-      "vitest/config": ["./node_modules/vitest/config"],
-      "vitest/globals": ["./node_modules/vitest/globals"],
-      "@testing-library/jest-dom/extend-expect": ["./node_modules/@testing-library/jest-dom/extend-expect"]
-    },
 
     /* Linting */
     "strict": true,
