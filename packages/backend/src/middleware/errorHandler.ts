@@ -26,7 +26,7 @@ const errorHandler = (err: Error, req: Request, res: Response, next: NextFunctio
   }
 
   // Generic error handling
-  res.status((err as any).statusCode || 500).json({ // Cast to any to access 'statusCode'
+  res.status((err as any).statusCode || (err as any).status || 500).json({ // Cast to any to access 'statusCode' and 'status'
     status: 'error',
     message: err.message || 'Internal Server Error',
   });
