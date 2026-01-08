@@ -10,6 +10,12 @@ function AddExpenseForm({ tripId }: AddExpenseFormProps) {
   const [amount, setAmount] = useState('');
   const [date, setDate] = useState('');
 
+  const handleSetToday = () => {
+    const today = new Date();
+    const formattedDate = today.toISOString().split('T')[0]; // YYYY-MM-DD
+    setDate(formattedDate);
+  };
+
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
     axios.post(`/api/${tripId}/expenses`, { type, amount: parseFloat(amount), date })
@@ -44,7 +50,10 @@ function AddExpenseForm({ tripId }: AddExpenseFormProps) {
           </div>
           <div className="mb-3">
             <label htmlFor="date" className="form-label">Date</label>
-            <input type="date" className="form-control" id="date" value={date} onChange={e => setDate(e.target.value)} />
+            <div className="input-group">
+              <input type="date" className="form-control" id="date" value={date} onChange={e => setDate(e.target.value)} />
+              <button className="btn btn-outline-secondary" type="button" onClick={handleSetToday}>Today</button>
+            </div>
           </div>
           <button type="submit" className="btn btn-primary">Add Expense</button>
         </form>

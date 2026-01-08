@@ -113,4 +113,4 @@ This milestone focuses on establishing a strong, relational database schema and 
     -   [ ] Automate database migrations in the deployment process.
 -   [ ] **Pagination:**
     -   [ ] Implement pagination on all API endpoints that return lists.
--   [ ] **Date Input Enhancement:** Implement a "today" button or a calendar picker for date input fields to improve user experience and reduce manual typing.
+-   [x] **Date Input Enhancement:** Implement a "today" button or a calendar picker for date input fields to improve user experience and reduce manual typing.
