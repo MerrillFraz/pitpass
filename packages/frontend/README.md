@@ -36,3 +36,13 @@ The application has the following routes:
     The server will be running on `http://localhost:5173` (or another port if 5173 is in use).
 
 The frontend is configured to proxy API requests to the backend server running on `http://localhost:3000`.
+
+## Testing
+
+Unit and component tests for the frontend are set up using [Vitest](https://vitest.dev/) and [@testing-library/react](https://testing-library.com/docs/react-testing-library/intro/).
+
+To run the tests, navigate to the `packages/frontend` directory and execute:
+
+```sh
+npm test
+```

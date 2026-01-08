@@ -15,6 +15,16 @@ For more detailed information, please refer to the specific README files for eac
 - [Frontend README](./packages/frontend/README.md)
 - [Backend README](./packages/backend/README.md)
 
+## Testing Strategy
+
+This monorepo utilizes a robust testing strategy to ensure code quality and reliability across both the frontend and backend.
+
+- **Backend Testing**: Unit and integration tests for the Node.js Express API are implemented using [Jest](https://jestjs.io/) and [Supertest](https://github.com/visionmedia/supertest). This ensures that API endpoints and business logic function as expected.
+- **Frontend Testing**: Unit and component tests for the React application are implemented using [Vitest](https://vitest.dev/) and [@testing-library/react](https://testing-library.com/docs/react-testing-library/intro/). This verifies that UI components render correctly and user interactions work as intended.
+- **Continuous Integration (CI)**: Both frontend and backend tests are automatically executed as part of the GitHub Actions CI/CD pipeline on every push to the `main` branch and on every pull request. This guarantees that all changes are validated before being merged or deployed.
+
+For detailed instructions on how to run tests locally for each part of the application, please refer to their respective README files.
+
 ## Getting Started
 
 This project uses Docker and Docker Compose to create a consistent, one-step process for building and running the entire application.
