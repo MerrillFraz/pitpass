@@ -2,14 +2,18 @@ import { render, screen } from '@testing-library/react';
 import { MemoryRouter, useParams } from 'react-router-dom';
 import TripDetails from '../TripDetails';
 import axios from 'axios';
+import { vi } from 'vitest';
 
-jest.mock('axios');
-const mockedAxios = axios as jest.Mocked<typeof axios>;
+vi.mock('axios');
+const mockedAxios = axios as vi.Mocked<typeof axios>;
 
-jest.mock('react-router-dom', () => ({
-  ...jest.requireActual('react-router-dom'),
-  useParams: jest.fn(),
-}));
+vi.mock('react-router-dom', async (importOriginal) => {
+  const actual = await importOriginal();
+  return {
+    ...(actual as object),
+    useParams: vi.fn(),
+  };
+});
 
 describe('TripDetails', () => {
   const mockTrip = {
@@ -22,12 +26,12 @@ describe('TripDetails', () => {
   };
 
   beforeEach(() => {
-    (useParams as jest.Mock).mockReturnValue({ id: 'trip-1' });
+    (useParams as vi.Mock).mockReturnValue({ id: 'trip-1' });
     mockedAxios.get.mockResolvedValue({ data: mockTrip });
   });
 
   it('renders loading state initially', () => {
-    (useParams as jest.Mock).mockReturnValue({ id: 'loading-trip' });
+    (useParams as vi.Mock).mockReturnValue({ id: 'loading-trip' });
     mockedAxios.get.mockReturnValue(new Promise(() => {}));
     render(
       <MemoryRouter>
