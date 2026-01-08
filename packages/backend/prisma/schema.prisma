@@ -11,6 +11,100 @@ datasource db {
   provider = "postgresql"
 }
 
+model User {
+  id            String          @id @default(cuid())
+  email         String          @unique
+  password      String
+  firstName     String?
+  lastName      String?
+  memberships   TeamMembership[]
+  trips         Trip[]
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+}
+
+model Team {
+  id            String          @id @default(cuid())
+  name          String          @unique
+  memberships   TeamMembership[]
+  cars          Car[]
+  trips         Trip[]
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+}
+
+model TeamMembership {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id])
+  teamId      String
+  team        Team     @relation(fields: [teamId], references: [id])
+  role        Role
+  isPrimary   Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@unique([userId, teamId])
+}
+
+enum Role {
+  OWNER
+  DRIVER
+  PIT_BOSS
+  CREW
+  GUEST
+}
+
+model Car {
+  id        String   @id @default(cuid())
+  teamId    String
+  team      Team     @relation(fields: [teamId], references: [id])
+  make      String
+  model     String
+  year      Int
+  color     String?
+  vin       String?  @unique
+  raceResults RaceResult[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Track {
+  id        String    @id @default(cuid())
+  name      String    @unique
+  location  String
+  tripStops TripStop[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+model TripStop {
+  id        String    @id @default(cuid())
+  tripId    String
+  trip      Trip      @relation(fields: [tripId], references: [id])
+  trackId   String
+  track     Track     @relation(fields: [trackId], references: [id])
+  startDate DateTime
+  endDate   DateTime
+  raceResults RaceResult[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+model RaceResult {
+  id          String    @id @default(cuid())
+  tripStopId  String
+  tripStop    TripStop  @relation(fields: [tripStopId], references: [id])
+  carId       String
+  car         Car       @relation(fields: [carId], references: [id])
+  laps        Int?
+  bestLapTime Float?
+  position    Int?
+  notes       String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
 model Trip {
   id        String    @id @default(cuid())
   name      String
@@ -18,6 +112,11 @@ model Trip {
   location  String
   expenses  Expense[]
   notes     Note[]
+  tripStops TripStop[]
+  userId    String
+  user      User      @relation(fields: [userId], references: [id])
+  teamId    String
+  team      Team      @relation(fields: [teamId], references: [id])
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
 }

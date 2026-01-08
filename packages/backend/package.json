@@ -4,12 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "jest",
     "dev": "ts-node src/index.ts",
-    "build": "tsc",
-    "prisma:generate": "prisma generate",
-    "prisma:migrate": "prisma migrate dev",
-    "db:migrate:dev": "prisma migrate dev --name init"
+    "build": "tsc"
   },
   "keywords": [],
   "author": "",
@@ -18,19 +15,26 @@
   "dependencies": {
     "@prisma/adapter-pg": "^7.2.0",
     "@prisma/client": "^7.2.0",
+    "@types/http-status": "^0.2.30",
     "cors": "^2.8.5",
     "express": "^5.2.1",
-    "pg": "^8.16.3"
+    "http-status": "^2.1.0",
+    "pg": "^8.16.3",
+    "zod": "^4.3.5"
   },
   "devDependencies": {
+    "@prisma/config": "^7.2.0",
     "@types/cors": "^2.8.17",
     "@types/express": "^5.0.6",
+    "@types/jest": "^30.0.0",
     "@types/node": "^25.0.3",
     "@types/pg": "^8.16.0",
+    "@types/supertest": "^6.0.3",
+    "dotenv": "^16.6.1",
+    "jest": "^30.2.0",
     "prisma": "^7.2.0",
-    "ts-node": "^10.9.2",
-    "typescript": "^5.9.3",
-    "@prisma/config": "^7.2.0",
-    "dotenv": "^16.4.5"
+    "supertest": "^7.2.2",
+    "ts-jest": "^29.4.6",
+    "typescript": "^5.9.3"
   }
 }

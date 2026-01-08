@@ -13,9 +13,31 @@ permissions:
   id-token: 'write' # Essential for Workload Identity Federation
 
 jobs:
+  test:
+    name: 'Test Application'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20' # Use a consistent Node.js version
+
+      - name: Install Dependencies
+        run: npm install # Installs dependencies for all workspaces
+
+      - name: Run Backend Tests
+        run: npm test -w packages/backend
+
+      - name: Run Frontend Tests
+        run: npm test -w packages/frontend
+
   terraform:
     name: 'Terraform'
     runs-on: ubuntu-latest
+    needs: test # Ensure tests pass before proceeding to Terraform
     
     # Environment variables to keep the code clean
     env:
