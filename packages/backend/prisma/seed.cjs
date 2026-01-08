@@ -92,7 +92,7 @@ async function main() {
         data: {
           tripId: trip.id,
           type: faker.helpers.arrayElement(Object.values(ExpenseType)),
-          amount: faker.number.float({ min: 20, max: 1000, precision: 0.01 }),
+          amount: faker.number.float({ min: 20, max: 1000, multipleOf: 0.01 }),
           date: faker.date.between({ from: tripDate, to: new Date() }),
         },
       });

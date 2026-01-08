@@ -14,7 +14,7 @@ echo "Generating Prisma Client..."
 npx prisma generate
 
 echo "Seeding database..."
-npx prisma db seed
+node packages/backend/prisma/seed.cjs
 
 # Finally, execute the command passed to this script (the Dockerfile's CMD)
 exec "$@"
