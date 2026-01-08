@@ -104,11 +104,12 @@ This milestone focuses on establishing a strong, relational database schema and 
 
 ## Cross-Cutting Concerns
 
--   [ ] **Testing:**
-    -   [ ] Set up testing frameworks for frontend and backend.
+-   [x] **Testing:**
+    -   [x] Set up testing frameworks for frontend (Vitest) and backend (Jest).
+    -   [x] Integrated into CI/CD pipeline.
     -   [ ] Write unit and integration tests for all new features.
 -   [ ] **CI/CD:**
-    -   [ ] Enhance `deploy.yml` to run tests and linting on every commit.
+    -   [x] Enhance `deploy.yml` to run tests and linting on every commit.
     -   [ ] Automate database migrations in the deployment process.
 -   [ ] **Pagination:**
     -   [ ] Implement pagination on all API endpoints that return lists.

@@ -60,6 +60,16 @@ And an `enum` for `ExpenseType`.
     ```
     The server will be running on `http://localhost:3000`.
 
+## Testing
+
+Unit and integration tests for the backend are set up using [Jest](https://jestjs.io/).
+
+To run the tests, navigate to the `packages/backend` directory and execute:
+
+```sh
+npm test
+```
+
 ## Containerization
 
 The backend application is containerized using Docker. The `Dockerfile` in this directory defines a multi-stage build to create a small, optimized production image.
