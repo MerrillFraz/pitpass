@@ -2,8 +2,6 @@ import { Request, Response, NextFunction } from 'express';
 import { ZodError } from 'zod';
 
 const errorHandler = (err: Error, req: Request, res: Response, next: NextFunction) => {
-  console.error(err); // Log the error for debugging purposes
-
   // Handle Zod validation errors
   if (err instanceof ZodError) {
     return res.status(400).json({
@@ -33,3 +31,4 @@ const errorHandler = (err: Error, req: Request, res: Response, next: NextFunctio
 };
 
 export default errorHandler;
+

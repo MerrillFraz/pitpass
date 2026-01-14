@@ -1,5 +1,6 @@
 import express, { Express, Request, Response } from 'express';
 import tripsRouter from './routes/trips';
+import authRouter from './routes/auth';
 // import expensesRouter from './routes/expenses'; // Removed
 // import notesRouter from './routes/notes';     // Removed
 import cors from 'cors';
@@ -17,6 +18,7 @@ app.get('/', (req: Request, res: Response) => {
   res.send('Racing Expenses API');
 });
 
+app.use('/api/auth', authRouter);
 app.use('/api/trips', tripsRouter);
 // app.use('/api', expensesRouter); // Removed
 // app.use('/api', notesRouter);     // Removed
