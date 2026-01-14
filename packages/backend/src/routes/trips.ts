@@ -5,8 +5,10 @@ import { createTripSchema, updateTripSchema } from '../schemas/tripSchemas';
 import expensesRouter from './expenses';
 import notesRouter from './notes';
 import tripStopsRouter from './tripStops'; // Import tripStops router
+import { protect } from '../middleware/auth';
 
 const router = Router();
+router.use(protect);
 
 // Middleware to attach tripId to req for nested routes
 router.use('/:tripId', (req, res, next) => {
@@ -22,6 +24,9 @@ router.use('/:tripId/stops', tripStopsRouter); // Mount tripStops router
 // GET all trips
 router.get('/', async (req, res) => {
     const trips = await prisma.trip.findMany({
+      where: {
+        userId: req.user.id,
+      },
       include: {
         expenses: true,
         notes: true,
@@ -33,8 +38,11 @@ router.get('/', async (req, res) => {
 // GET a single trip by id
 router.get('/:id', async (req, res) => {
     const { id } = req.params;
-    const trip = await prisma.trip.findUnique({
-      where: { id },
+    const trip = await prisma.trip.findFirst({
+      where: {
+        id,
+        userId: req.user.id,
+      },
       include: {
         expenses: true,
         notes: true,
@@ -45,13 +53,13 @@ router.get('/:id', async (req, res) => {
 
 // POST a new trip
 router.post('/', validate(createTripSchema), async (req, res) => {
-    const { name, date, location, userId, teamId } = req.body;
+    const { name, date, location, teamId } = req.body;
     const trip = await prisma.trip.create({
       data: {
         name,
         date,
         location,
-        userId,
+        userId: req.user.id,
         teamId,
       },
     });
@@ -61,14 +69,16 @@ router.post('/', validate(createTripSchema), async (req, res) => {
 // PUT (update) a trip
 router.put('/:id', validate(updateTripSchema), async (req, res) => {
     const { id } = req.params;
-    const { name, date, location, userId, teamId } = req.body;
-    const trip = await prisma.trip.update({
-      where: { id },
+    const { name, date, location, teamId } = req.body;
+    const trip = await prisma.trip.updateMany({
+      where: {
+        id,
+        userId: req.user.id,
+      },
       data: {
         name,
         date,
         location,
-        userId,
         teamId,
       },
     });
@@ -78,8 +88,11 @@ router.put('/:id', validate(updateTripSchema), async (req, res) => {
 // DELETE a trip
 router.delete('/:id', async (req, res) => {
     const { id } = req.params;
-    await prisma.trip.delete({
-      where: { id },
+    await prisma.trip.deleteMany({
+      where: {
+        id,
+        userId: req.user.id,
+      },
     });
     res.status(204).json({ message: 'Trip deleted' });
 });

@@ -9,4 +9,5 @@ module.exports = {
   },
   moduleFileExtensions: ['ts', 'js', 'json', 'node'],
   testMatch: ['<rootDir>/src/**/*.test.ts'],
+  setupFilesAfterEnv: ['<rootDir>/src/tests/setup.ts'],
 };
