@@ -30,6 +30,13 @@ router.get('/:id', async (req, res) => {
   const tripId = req.tripId!;
   const tripStop = await prisma.tripStop.findUnique({
     where: { id, tripId },
+    include: {
+      track: true,
+      raceResults: {
+        include: { car: true },
+        orderBy: { createdAt: 'asc' },
+      },
+    },
   });
   res.json(tripStop);
 });

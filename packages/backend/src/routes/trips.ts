@@ -51,6 +51,10 @@ router.get('/:id', async (req, res, next) => {
       include: {
         expenses: true,
         notes: true,
+        tripStops: {
+          include: { track: true },
+          orderBy: { startDate: 'asc' },
+        },
       },
     });
     if (!trip) {
