@@ -66,7 +66,7 @@ router.delete('/:id', async (req, res) => {
   await prisma.raceResult.delete({
     where: { id, tripStopId },
   });
-  res.status(204).json({ message: 'Race result deleted' });
+  res.status(204).end();
 });
 
 export default router;

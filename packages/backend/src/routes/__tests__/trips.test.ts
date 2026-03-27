@@ -93,11 +93,10 @@ describe('Trips Routes', () => {
     });
   });
 
-  it('should return null when getting a trip not owned by the user', async () => {
+  it('should return 404 when getting a trip not owned by the user', async () => {
     prismaMock.trip.findFirst.mockResolvedValue(null);
     const res = await request(app).get('/api/trips/trip2').set('Authorization', 'Bearer token');
-    expect(res.status).toBe(200);
-    expect(res.body).toBe(null);
+    expect(res.status).toBe(404);
   });
 
   it('should create a new trip for the authenticated user', async () => {

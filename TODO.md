@@ -23,9 +23,9 @@ This milestone focuses on establishing a strong, relational database schema and 
 -   [x] **Configuration Management:**
     -   [x] Externalize all secrets and configuration (database URL, API keys, JWT secret) using environment variables (`.env` file).
 
-## Milestone 2: Team and User Management
+## Milestone 2: Team and User Management (Complete)
 
--   [ ] **Authentication:**
+-   [x] **Authentication:**
     -   [x] Implement JWT-based authentication (`login`, `register`, `logout`). *(backend routes exist)*
     -   [x] Auth middleware (`protect`) securing all data routes.
     -   [x] RBAC middleware (`hasRole`) for owner-only team actions.
@@ -36,14 +36,14 @@ This milestone focuses on establishing a strong, relational database schema and 
     -   [x] **BUG FIXED:** Frontend production build now excludes test files (`tsconfig.app.json`).
     -   [x] Frontend: Build login/register pages and auth context (JWT storage, attach token to all API requests).
     -   [x] Track the `User` making each data entry. *(backend scopes trips to `req.user.id`; frontend now sends JWT on all requests)*
--   [ ] **Team Functionality:**
+-   [x] **Team Functionality:**
     -   [x] API endpoints for creating and managing a `Team` (CRUD). *(backend complete)*
-    -   [ ] Frontend: Build team creation/management UI.
-    -   [ ] Implement a system for inviting new `Users` to a `Team`. *(deferred per MILESTONE_2_PLAN.md)*
--   [ ] **Roles and Rosters:**
+    -   [x] Frontend: Build team creation/management UI (`TeamsPage` — list, create, delete).
+    -   [ ] Implement a system for inviting new `Users` to a `Team`. *(deferred — currently add-by-email requires user to already exist)*
+-   [x] **Roles and Rosters:**
     -   [x] Define a default set of `Roles` (OWNER, DRIVER, PIT_BOSS, CREW, GUEST enum in schema).
-    -   [ ] API endpoints for roster management: `GET /api/teams/:teamId/roster`, `POST/PUT/DELETE /api/teams/:teamId/members/:userId`. *(not yet implemented)*
-    -   [ ] Frontend UI for viewing and managing the team roster.
+    -   [x] API endpoints for roster management: `GET/POST /api/teams/:teamId/members`, `PUT/DELETE /api/teams/:teamId/members/:membershipId`.
+    -   [x] Frontend UI for viewing and managing the team roster (`TeamRoster` — add by email, change role, remove; primary owner protected).
 
 ## Milestone 3: Car, Maintenance, and Performance Tracking
 
@@ -144,14 +144,14 @@ Bugs and quality issues discovered during audit (2026-03-26). Items marked 🔴 
 
 ### 🟡 Correctness Issues
 
--   [ ] **`res.status(204).json(...)` on DELETE endpoints:** HTTP 204 No Content must not have a body. Five DELETE routes send a JSON body with `204`. Fix: use `res.status(204).end()` or `res.sendStatus(204)`.
--   [ ] **`GET /api/teams/:teamId` returns `null` instead of 404:** If the team isn't found or the user isn't a member, `findFirst` returns `null` and the route sends `200 null`. Should return `404`.
--   [ ] **`trips.ts` route handlers missing try/catch:** Most trip route handlers (`GET /`, `GET /:id`, `POST /`, `PUT /`, `DELETE /`) don't have try/catch blocks. Prisma errors will surface as unhandled promise rejections and won't be routed through the centralized error handler.
+-   [x] **FIXED: `res.status(204).json(...)` on DELETE endpoints** — all DELETE handlers in `trips.ts`, `expenses.ts`, `notes.ts`, `tripStops.ts`, `raceResults.ts` now use `res.status(204).end()`.
+-   [x] **FIXED: `GET /api/teams/:teamId` returns `null` instead of 404** — now returns 404 when team not found or user not a member.
+-   [x] **FIXED: `trips.ts` route handlers missing try/catch** — all five handlers now wrapped; `GET /:id` also returns 404 on null.
 
 ### 🟢 Quality / Code Hygiene
 
--   [ ] **`TripReport.tsx` has debug `console.log` statements:** Three `console.log` calls are left in the render function (lines 81-83). Remove before any production deployment.
--   [ ] **CORS origin is hardcoded:** `index.ts` sets `origin: 'http://localhost:5173'`. This will not work in production. The allowed origin should come from an environment variable.
--   [ ] **No `JWT_SECRET` validation on startup:** The app calls `process.env.JWT_SECRET as string` with no check. If the env var is missing, tokens are signed with `undefined` and the error surface is confusing. Add a startup check that throws if `JWT_SECRET` is not set.
+-   [x] **FIXED: `TripReport.tsx` debug `console.log` statements** — removed all debug logs; also fixed to use `axios` instead of `fetch` (was causing 401 in production builds).
+-   [x] **FIXED: CORS origin hardcoded** — now reads from `CORS_ORIGIN` env var with `localhost:5173` fallback.
+-   [x] **FIXED: No `JWT_SECRET` validation on startup** — server now exits with a clear error if `JWT_SECRET` is not set.
 -   [ ] **Duplicate Zod error handling:** `validate.ts` catches `ZodError` and returns a response directly. The `ZodError` branch in `errorHandler.ts` is therefore dead code — `validate` never calls `next(zodError)`. Consider removing it from `errorHandler.ts` or unifying the approach.
--   [ ] **`window.location.reload()` in form submit handlers:** `AddTripForm.tsx` and `AddExpenseForm.tsx` both reload the entire page after a successful POST. This is a poor UX pattern — the forms should update local state or trigger a data re-fetch instead.
+-   [x] **FIXED: `window.location.reload()` in form submit handlers** — `AddTripForm.tsx`, `AddExpenseForm.tsx`, and `AddNoteForm.tsx` now call an `onSuccess` callback and reset form state instead of reloading the page.

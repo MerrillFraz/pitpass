@@ -7,12 +7,17 @@ import teamsRouter from './routes/teams';
 import cors from 'cors';
 import errorHandler from './middleware/errorHandler'; // Import the error handler
 
+if (!process.env.JWT_SECRET) {
+  console.error('FATAL: JWT_SECRET is not set');
+  process.exit(1);
+}
+
 const app: Express = express();
 const port = Number(process.env.PORT) || 3000;
 
 app.use(express.json());
 app.use(cors({
-  origin: 'http://localhost:5173'
+  origin: process.env.CORS_ORIGIN || 'http://localhost:5173'
 }));
 
 app.get('/', (req: Request, res: Response) => {

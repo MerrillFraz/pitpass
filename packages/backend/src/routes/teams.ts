@@ -5,6 +5,7 @@ import { createTeamSchema, updateTeamSchema } from '../schemas/teamSchemas';
 import { protect } from '../middleware/auth';
 import { hasRole } from '../middleware/rbac';
 import { Role } from '@prisma/client';
+import rosterRouter from './roster';
 
 const router = Router();
 router.use(protect);
@@ -42,6 +43,11 @@ router.get('/', async (req, res, next) => {
           },
         },
       },
+      include: {
+        memberships: {
+          select: { userId: true, role: true, isPrimary: true },
+        },
+      },
     });
     res.json(teams);
   } catch (error) {
@@ -77,6 +83,9 @@ router.get('/:teamId', async (req, res, next) => {
         }
       }
     });
+    if (!team) {
+      return res.status(404).json({ message: 'Team not found' });
+    }
     res.json(team);
   } catch (error) {
     next(error);
@@ -122,5 +131,7 @@ router.delete('/:teamId', hasRole([Role.OWNER]), async (req, res, next) => {
     next(error);
   }
 });
+
+router.use('/:teamId/members', rosterRouter);
 
 export default router;

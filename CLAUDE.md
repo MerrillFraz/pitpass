@@ -97,4 +97,4 @@ Tests run automatically in GitHub Actions on every push/PR to `main`.
 
 See **[TODO.md](TODO.md)** — it is the single source of truth for the roadmap, milestone status, and tech debt.
 
-**Current status (as of 2026-03-27):** Milestone 2 auth is fully working end-to-end — backend and frontend. Login/register page, JWT stored in localStorage, axios Authorization header set globally, all routes protected. Seeded user: `merrill@vortex.com` / `password`. All critical bugs from the audit are resolved. See Tech Debt section of TODO.md for remaining correctness/quality issues.
+**Current status (as of 2026-03-27):** Milestone 2 is complete. Auth, team CRUD, roster management API (`GET/POST/PUT/DELETE /api/teams/:teamId/members`), and team/roster frontend UI are all working end-to-end. All 🔴 critical and 🟡 correctness bugs from the audit are resolved; most 🟢 quality issues are fixed (one Zod dedup item remains). Seeded users: `merrill@vortex.com` / `password` (OWNER) and `driver@vortex.com` / `password` (unassigned). Ready to PR to `main`. See TODO.md for Milestone 3 scope.

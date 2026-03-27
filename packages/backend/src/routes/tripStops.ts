@@ -72,7 +72,7 @@ router.delete('/:id', async (req, res) => {
   await prisma.tripStop.delete({
     where: { id, tripId },
   });
-  res.status(204).json({ message: 'Trip stop deleted' });
+  res.status(204).end();
 });
 
 export default router;

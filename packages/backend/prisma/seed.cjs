@@ -32,7 +32,7 @@ async function main() {
     },
   });
 
-  // 2. Create a User
+  // 2. Create Users
   const hashedPassword = await bcrypt.hash('password', 10);
   const user = await prisma.user.create({
     data: {
@@ -43,12 +43,22 @@ async function main() {
     },
   });
 
-  // 3. Link User and Team
+  const driver = await prisma.user.create({
+    data: {
+      email: 'driver@vortex.com',
+      password: hashedPassword,
+      firstName: 'Alex',
+      lastName: 'Driver',
+    },
+  });
+
+  // 3. Link Users and Team
   await prisma.teamMembership.create({
     data: {
       teamId: team.id,
       userId: user.id,
       role: Role.OWNER,
+      isPrimary: true,
     },
   });
 

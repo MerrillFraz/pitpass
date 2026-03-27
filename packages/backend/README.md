@@ -1,79 +1,79 @@
 # Backend
 
-This is the backend for the PitPass application. It's a Node.js application built with Express and TypeScript, and it uses Prisma as an ORM to interact with the PostgreSQL database.
+Node.js + Express + TypeScript API for PitPass. Uses Prisma (PostgreSQL) for persistence, JWT for auth, and Zod for request validation.
 
 ## API Endpoints
 
+All data routes require `Authorization: Bearer <token>`.
+
+### Auth
+
+- `POST /api/auth/register` — `{ firstName, lastName, email, password }`
+- `POST /api/auth/login` — `{ email, password }` → `{ token, user }`
+- `POST /api/auth/logout`
+
+### Teams
+
+- `GET /api/teams` — all teams for the authenticated user
+- `POST /api/teams` — `{ name }`
+- `GET /api/teams/:teamId`
+- `PUT /api/teams/:teamId` — `{ name }` *(OWNER only)*
+- `DELETE /api/teams/:teamId` *(OWNER only)*
+
+### Roster
+
+- `GET /api/teams/:teamId/members`
+- `POST /api/teams/:teamId/members` — `{ email, role }` *(OWNER only)*
+- `PUT /api/teams/:teamId/members/:membershipId` — `{ role }` *(OWNER only)*
+- `DELETE /api/teams/:teamId/members/:membershipId` *(OWNER only)*
+
 ### Trips
 
--   `GET /api/trips`: Get all trips.
--   `GET /api/trips/:id`: Get a single trip by ID.
--   `POST /api/trips`: Create a new trip.
-    -   Body: `{ "name": "string", "date": "DateTime", "location": "string" }`
--   `PUT /api/trips/:id`: Update a trip.
-    -   Body: `{ "name": "string", "date": "DateTime", "location": "string" }`
--   `DELETE /api/trips/:id`: Delete a trip.
+- `GET /api/trips`
+- `GET /api/trips/:id`
+- `POST /api/trips` — `{ name, date, location, teamId }`
+- `PUT /api/trips/:id`
+- `DELETE /api/trips/:id`
 
-### Expenses
+### Nested Trip Resources
 
--   `GET /api/:tripId/expenses`: Get all expenses for a trip.
--   `POST /api/:tripId/expenses`: Create a new expense for a trip.
-    -   Body: `{ "type": "ExpenseType", "amount": "float", "date": "DateTime" }`
--   `DELETE /api/expenses/:id`: Delete an expense.
-
-### Notes
-
--   `GET /api/:tripId/notes`: Get all notes for a trip.
--   `POST /api/:tripId/notes`: Create a new note for a trip.
-    -   Body: `{ "content": "string", "date": "DateTime" }`
--   `DELETE /api/notes/:id`: Delete a note.
-
-## Database Schema
-
-The database schema is defined in the `prisma/schema.prisma` file. It consists of the following models:
-
--   `Trip`
--   `Expense`
--   `Note`
--   `Receipt`
-
-And an `enum` for `ExpenseType`.
+- `GET|POST /api/trips/:tripId/expenses`
+- `PUT|DELETE /api/trips/:tripId/expenses/:id`
+- `GET|POST /api/trips/:tripId/notes`
+- `PUT|DELETE /api/trips/:tripId/notes/:id`
+- `GET|POST /api/trips/:tripId/stops`
+- `PUT|DELETE /api/trips/:tripId/stops/:id`
+- `GET|POST /api/trips/:tripId/stops/:stopId/results`
+- `PUT|DELETE /api/trips/:tripId/stops/:stopId/results/:id`
 
 ## Running Locally
 
-1.  Navigate to the backend package:
-    ```sh
-    cd packages/backend
-    ```
-2.  Install dependencies:
-    ```sh
-    npm install
-    ```
-3.  Set up the `.env` file with the `DATABASE_URL`.
-4.  Run the database migrations:
-    ```sh
-    npx prisma migrate dev
-    ```
-5.  Start the development server:
-    ```sh
-    npm run dev
-    ```
-    The server will be running on `http://localhost:3000`.
+The recommended way is via Docker Compose from the repo root:
+
+```sh
+docker compose up --build
+```
+
+This starts the DB, backend, and frontend together. The DB is wiped and reseeded on every backend container start. Seed credentials: `merrill@vortex.com` / `password`.
+
+To run the backend in isolation, create `packages/backend/.env`:
+
+```
+DATABASE_URL="postgresql://user:password@localhost:5432/pitpass_db"
+JWT_SECRET="your-secret-here"
+CORS_ORIGIN="http://localhost:5173"
+```
+
+Then:
+
+```sh
+npm install
+npx prisma migrate dev
+npm run dev
+```
 
 ## Testing
 
-Unit and integration tests for the backend are set up using [Jest](https://jestjs.io/).
-
-To run the tests, navigate to the `packages/backend` directory and execute:
-
 ```sh
-npm test
+npm test -w packages/backend
 ```
-
-## Containerization
-
-The backend application is containerized using Docker. The `Dockerfile` in this directory defines a multi-stage build to create a small, optimized production image.
-
-### Entrypoint Script
-
-The `docker-entrypoint.sh` script is used as the entrypoint for the Docker container. This script waits for the database to be available and then automatically runs any pending database migrations using `prisma migrate deploy` before starting the application. This ensures that the database schema is always up-to-date when the application starts.

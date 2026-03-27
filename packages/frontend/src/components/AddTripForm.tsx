@@ -6,7 +6,11 @@ interface Team {
   name: string;
 }
 
-function AddTripForm() {
+interface AddTripFormProps {
+  onSuccess?: () => void;
+}
+
+function AddTripForm({ onSuccess }: AddTripFormProps) {
   const [name, setName] = useState('');
   const [date, setDate] = useState('');
   const [location, setLocation] = useState('');
@@ -32,7 +36,10 @@ function AddTripForm() {
     event.preventDefault();
     axios.post('/api/trips', { name, date: new Date(date).toISOString(), location, teamId })
       .then(() => {
-        window.location.reload();
+        setName('');
+        setDate('');
+        setLocation('');
+        onSuccess?.();
       })
       .catch(error => {
         console.error('Error adding trip:', error);

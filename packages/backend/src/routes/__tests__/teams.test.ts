@@ -80,6 +80,15 @@ describe('Teams Routes', () => {
                     },
                 },
             },
+            include: {
+                memberships: {
+                    select: {
+                        userId: true,
+                        role: true,
+                        isPrimary: true,
+                    },
+                },
+            },
         });
     });
 

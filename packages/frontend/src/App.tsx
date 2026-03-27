@@ -5,6 +5,8 @@ import LoginPage from './components/LoginPage';
 import TripList from './components/TripList';
 import TripDetails from './components/TripDetails';
 import TripReport from './components/TripReport';
+import TeamsPage from './components/TeamsPage';
+import TeamRoster from './components/TeamRoster';
 import './App.css';
 
 function NavBar() {
@@ -14,6 +16,9 @@ function NavBar() {
       <ul className="flex space-x-4 mb-0 list-unstyled d-flex gap-3">
         <li>
           <Link to="/" className="text-blue-600 hover:underline">Home</Link>
+        </li>
+        <li>
+          <Link to="/teams" className="text-blue-600 hover:underline">Teams</Link>
         </li>
         <li>
           <Link to="/reports" className="text-blue-600 hover:underline">Reports</Link>
@@ -41,6 +46,8 @@ function App() {
             <Route path="/" element={<ProtectedRoute><TripList /></ProtectedRoute>} />
             <Route path="/trip/:id" element={<ProtectedRoute><TripDetails /></ProtectedRoute>} />
             <Route path="/reports" element={<ProtectedRoute><TripReport /></ProtectedRoute>} />
+            <Route path="/teams" element={<ProtectedRoute><TeamsPage /></ProtectedRoute>} />
+            <Route path="/teams/:teamId/roster" element={<ProtectedRoute><TeamRoster /></ProtectedRoute>} />
           </Routes>
         </div>
       </Router>
