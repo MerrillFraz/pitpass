@@ -6,11 +6,11 @@ import errorHandler from '../../middleware/errorHandler';
 import { User, Role, Team } from '@prisma/client';
 
 jest.mock('../../middleware/auth', () => ({
-  protect: (req, res, next) => {
+  protect: (req: any, res: any, next: any) => {
     if (!req.headers.authorization) {
       return res.status(401).json({ message: 'Unauthorized' });
     }
-    req.user = { id: 'user1', email: 'test@example.com', name: 'Test User' };
+    req.user = { id: 'user1', email: 'test@example.com', firstName: 'Test', lastName: 'User' };
     next();
   },
 }));
@@ -24,7 +24,8 @@ const user: User = {
     id: 'user1',
     email: 'test@example.com',
     password: 'hashedPassword',
-    name: 'Test User',
+    firstName: 'Test',
+    lastName: 'User',
     createdAt: new Date(),
     updatedAt: new Date(),
 };

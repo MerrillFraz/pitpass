@@ -18,7 +18,7 @@ function AddExpenseForm({ tripId }: AddExpenseFormProps) {
 
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
-    axios.post(`/api/${tripId}/expenses`, { type, amount: parseFloat(amount), date })
+    axios.post(`/api/trips/${tripId}/expenses`, { type, amount: parseFloat(amount), date })
       .then(() => {
         window.location.reload();
       })

@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
-import { prisma } from '../prisma';
+import prisma from '../prisma';
 
 export const protect = async (req: Request, res: Response, next: NextFunction) => {
   const bearer = req.headers.authorization;

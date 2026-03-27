@@ -19,7 +19,8 @@ describe('Auth Routes', () => {
       const userData = {
         email: 'test@example.com',
         password: 'password123',
-        name: 'Test User',
+        firstName: 'Test',
+        lastName: 'User',
       };
       const hashedPassword = 'hashedPassword';
       const user = { id: '1', ...userData, password: hashedPassword, createdAt: new Date(), updatedAt: new Date() };
@@ -38,7 +39,8 @@ describe('Auth Routes', () => {
       const userData = {
         email: 'test@example.com',
         password: 'password123',
-        name: 'Test User',
+        firstName: 'Test',
+        lastName: 'User',
       };
       const user = { id: '1', ...userData, createdAt: new Date(), updatedAt: new Date() };
 
@@ -54,7 +56,8 @@ describe('Auth Routes', () => {
   describe('POST /api/auth/login', () => {
     it('should login an existing user and return a token', async () => {
         const loginData = { email: 'test@example.com', password: 'password123' };
-        const user = { id: '1', email: 'test@example.com', password: 'hashedPassword', name: 'Test User', createdAt: new Date(), updatedAt: new Date() };
+        const user = { id: '1', email: 'test@example.com', password: 'hashedPassword', firstName: 'Test',
+        lastName: 'User', createdAt: new Date(), updatedAt: new Date() };
   
         prismaMock.user.findUnique.mockResolvedValue(user);
         jest.spyOn(bcrypt, 'compare').mockResolvedValue(true as never);
@@ -78,7 +81,8 @@ describe('Auth Routes', () => {
 
     it('should return 401 for invalid credentials (wrong password)', async () => {
         const loginData = { email: 'test@example.com', password: 'wrongpassword' };
-        const user = { id: '1', email: 'test@example.com', password: 'hashedPassword', name: 'Test User', createdAt: new Date(), updatedAt: new Date() };
+        const user = { id: '1', email: 'test@example.com', password: 'hashedPassword', firstName: 'Test',
+        lastName: 'User', createdAt: new Date(), updatedAt: new Date() };
 
         prismaMock.user.findUnique.mockResolvedValue(user);
         jest.spyOn(bcrypt, 'compare').mockResolvedValue(false as never);

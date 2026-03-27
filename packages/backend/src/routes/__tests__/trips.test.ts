@@ -7,14 +7,14 @@ import { User } from '@prisma/client';
 
 // Mock the protect middleware
 jest.mock('../../middleware/auth', () => ({
-  protect: (req, res, next) => {
+  protect: (req: any, res: any, next: any) => {
     // Check for a token to simulate protected route
     const bearer = req.headers.authorization;
     if (!bearer || !bearer.startsWith('Bearer ')) {
       return res.status(401).json({ message: 'Unauthorized' });
     }
     // Attach a mock user to the request
-    req.user = { id: 'user1', email: 'test@example.com', name: 'Test User' };
+    req.user = { id: 'user1', email: 'test@example.com', firstName: 'Test', lastName: 'User' };
     next();
   },
 }));
@@ -28,7 +28,8 @@ const user = {
     id: 'user1',
     email: 'test@example.com',
     password: 'hashedPassword',
-    name: 'Test User',
+    firstName: 'Test',
+    lastName: 'User',
     createdAt: new Date(),
     updatedAt: new Date(),
 } as User;

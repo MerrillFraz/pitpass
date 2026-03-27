@@ -4,13 +4,13 @@ import { createRaceResultSchema, updateRaceResultSchema } from '../raceResultSch
 describe('createRaceResultSchema', () => {
   it('should validate a correct race result object', () => {
     const validRaceResult = {
-      carId: 'cluyd22s0000035661g8y2j4y', // Changed to CUID
+      carId: 'cluyd22s0000035661g8y2j4y',
       laps: 50,
       bestLapTime: 90.5,
       position: 1,
       notes: 'Great race, car felt good.',
     };
-    expect(() => createRaceResultSchema.parse(validRaceResult)).not.toThrow();
+    expect(() => createRaceResultSchema.parse({ body: validRaceResult })).not.toThrow();
   });
 
   it('should throw an error for missing carId', () => {
@@ -20,7 +20,7 @@ describe('createRaceResultSchema', () => {
       position: 1,
       notes: 'Great race, car felt good.',
     };
-    expect(() => createRaceResultSchema.parse(invalidRaceResult)).toThrow(z.ZodError);
+    expect(() => createRaceResultSchema.parse({ body: invalidRaceResult })).toThrow(z.ZodError);
   });
 
   it('should throw an error for invalid carId format', () => {
@@ -29,14 +29,14 @@ describe('createRaceResultSchema', () => {
       laps: 50,
       bestLapTime: 90.5,
     };
-    expect(() => createRaceResultSchema.parse(invalidRaceResult)).toThrow(z.ZodError);
+    expect(() => createRaceResultSchema.parse({ body: invalidRaceResult })).toThrow(z.ZodError);
   });
 
   it('should allow optional fields to be missing', () => {
     const validRaceResult = {
       carId: 'cluyd22s0000035661g8y2j4y',
     };
-    expect(() => createRaceResultSchema.parse(validRaceResult)).not.toThrow();
+    expect(() => createRaceResultSchema.parse({ body: validRaceResult })).not.toThrow();
   });
 
   it('should throw an error for invalid laps type', () => {
@@ -44,7 +44,7 @@ describe('createRaceResultSchema', () => {
       carId: 'cluyd22s0000035661g8y2j4y',
       laps: 'fifty',
     };
-    expect(() => createRaceResultSchema.parse(invalidRaceResult)).toThrow(z.ZodError);
+    expect(() => createRaceResultSchema.parse({ body: invalidRaceResult })).toThrow(z.ZodError);
   });
 
   it('should throw an error for non-positive laps', () => {
@@ -52,7 +52,7 @@ describe('createRaceResultSchema', () => {
       carId: 'cluyd22s0000035661g8y2j4y',
       laps: 0,
     };
-    expect(() => createRaceResultSchema.parse(invalidRaceResult)).toThrow(z.ZodError);
+    expect(() => createRaceResultSchema.parse({ body: invalidRaceResult })).toThrow(z.ZodError);
   });
 
   it('should throw an error for invalid bestLapTime type', () => {
@@ -60,7 +60,7 @@ describe('createRaceResultSchema', () => {
       carId: 'cluyd22s0000035661g8y2j4y',
       bestLapTime: 'ninety',
     };
-    expect(() => createRaceResultSchema.parse(invalidRaceResult)).toThrow(z.ZodError);
+    expect(() => createRaceResultSchema.parse({ body: invalidRaceResult })).toThrow(z.ZodError);
   });
 
   it('should throw an error for non-positive bestLapTime', () => {
@@ -68,7 +68,7 @@ describe('createRaceResultSchema', () => {
       carId: 'cluyd22s0000035661g8y2j4y',
       bestLapTime: 0,
     };
-    expect(() => createRaceResultSchema.parse(invalidRaceResult)).toThrow(z.ZodError);
+    expect(() => createRaceResultSchema.parse({ body: invalidRaceResult })).toThrow(z.ZodError);
   });
 });
 
@@ -78,32 +78,32 @@ describe('updateRaceResultSchema', () => {
       position: 2,
       notes: 'Car was a bit loose.',
     };
-    expect(() => updateRaceResultSchema.parse(validUpdate)).not.toThrow();
+    expect(() => updateRaceResultSchema.parse({ body: validUpdate })).not.toThrow();
   });
 
   it('should allow empty object for partial update', () => {
     const emptyUpdate = {};
-    expect(() => updateRaceResultSchema.parse(emptyUpdate)).not.toThrow();
+    expect(() => updateRaceResultSchema.parse({ body: emptyUpdate })).not.toThrow();
   });
 
   it('should throw an error for invalid carId format in update', () => {
     const invalidUpdate = {
       carId: 'another-bad-id',
     };
-    expect(() => updateRaceResultSchema.parse(invalidUpdate)).toThrow(z.ZodError);
+    expect(() => updateRaceResultSchema.parse({ body: invalidUpdate })).toThrow(z.ZodError);
   });
 
   it('should throw an error for invalid position type in update', () => {
     const invalidUpdate = {
       position: 'second',
     };
-    expect(() => updateRaceResultSchema.parse(invalidUpdate)).toThrow(z.ZodError);
+    expect(() => updateRaceResultSchema.parse({ body: invalidUpdate })).toThrow(z.ZodError);
   });
 
   it('should throw an error for non-positive position in update', () => {
     const invalidUpdate = {
       position: 0,
     };
-    expect(() => updateRaceResultSchema.parse(invalidUpdate)).toThrow(z.ZodError);
+    expect(() => updateRaceResultSchema.parse({ body: invalidUpdate })).toThrow(z.ZodError);
   });
 });

@@ -9,7 +9,7 @@ const router = Router();
 
 router.post('/register', validate(registerSchema), async (req, res, next) => {
   try {
-    const { email, password, name } = req.body;
+    const { email, password, firstName, lastName } = req.body;
 
     const existingUser = await prisma.user.findUnique({ where: { email } });
     if (existingUser) {
@@ -22,7 +22,8 @@ router.post('/register', validate(registerSchema), async (req, res, next) => {
       data: {
         email,
         password: hashedPassword,
-        name,
+        firstName,
+        lastName,
       },
     });
 

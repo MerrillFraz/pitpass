@@ -6,7 +6,7 @@ declare global {
     interface Request {
       tripId?: string;
       stopId?: string; // Added stopId
-      user?: User;
+      user: User;
     }
   }
 }

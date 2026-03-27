@@ -2,6 +2,7 @@ const { Pool } = require('pg');
 const { PrismaPg } = require('@prisma/adapter-pg');
 const { PrismaClient, Role, ExpenseType } = require('@prisma/client');
 const { faker } = require('@faker-js/faker');
+const bcrypt = require('bcrypt');
 
 const pool = new Pool({ connectionString: process.env.DATABASE_URL });
 const adapter = new PrismaPg(pool);
@@ -32,10 +33,11 @@ async function main() {
   });
 
   // 2. Create a User
+  const hashedPassword = await bcrypt.hash('password', 10);
   const user = await prisma.user.create({
     data: {
       email: 'merrill@vortex.com',
-      password: 'password', // In a real app, this would be hashed
+      password: hashedPassword,
       firstName: 'Merrill',
       lastName: 'B',
     },
