@@ -8,6 +8,7 @@ import TripReport from './components/TripReport';
 import TeamsPage from './components/TeamsPage';
 import TeamRoster from './components/TeamRoster';
 import CarsPage from './components/CarsPage';
+import CarMaintenancePage from './components/CarMaintenancePage';
 import './App.css';
 
 function NavBar() {
@@ -50,6 +51,7 @@ function App() {
             <Route path="/teams" element={<ProtectedRoute><TeamsPage /></ProtectedRoute>} />
             <Route path="/teams/:teamId/roster" element={<ProtectedRoute><TeamRoster /></ProtectedRoute>} />
             <Route path="/teams/:teamId/cars" element={<ProtectedRoute><CarsPage /></ProtectedRoute>} />
+            <Route path="/teams/:teamId/cars/:carId/maintenance" element={<ProtectedRoute><CarMaintenancePage /></ProtectedRoute>} />
           </Routes>
         </div>
       </Router>
