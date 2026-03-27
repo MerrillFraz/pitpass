@@ -70,6 +70,33 @@ describe('createRaceResultSchema', () => {
     };
     expect(() => createRaceResultSchema.parse({ body: invalidRaceResult })).toThrow(z.ZodError);
   });
+
+  it('should accept a valid sessionType', () => {
+    const validRaceResult = {
+      carId: 'cluyd22s0000035661g8y2j4y',
+      sessionType: 'HOT_LAPS',
+    };
+    expect(() => createRaceResultSchema.parse({ body: validRaceResult })).not.toThrow();
+  });
+
+  it('should throw for an invalid sessionType value', () => {
+    const invalidRaceResult = {
+      carId: 'cluyd22s0000035661g8y2j4y',
+      sessionType: 'SPRINT',
+    };
+    expect(() => createRaceResultSchema.parse({ body: invalidRaceResult })).toThrow(z.ZodError);
+  });
+
+  it('should accept startPosition for heat races', () => {
+    const validRaceResult = {
+      carId: 'cluyd22s0000035661g8y2j4y',
+      sessionType: 'HEAT_RACE',
+      startPosition: 4,
+      laps: 15,
+      position: 2,
+    };
+    expect(() => createRaceResultSchema.parse({ body: validRaceResult })).not.toThrow();
+  });
 });
 
 describe('updateRaceResultSchema', () => {
