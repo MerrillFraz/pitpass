@@ -122,6 +122,7 @@ This milestone focuses on establishing a strong, relational database schema and 
     -   [ ] Automate database migrations in the deployment process.
     -   [ ] Wire `JWT_SECRET` into production deployment: add as a GitHub Actions secret, pass as `TF_VAR_jwt_secret` in `deploy.yml`, and declare it as a Terraform variable so it reaches the running container as an env var.
 -   [ ] **Dependency security:** Runtime vulnerabilities (axios, qs) resolved via `npm audit fix`. Remaining ~41 reported vulns are all Prisma CLI tooling or Jest/ESLint devDependencies — none run in production. The Prisma-related highs require a breaking Prisma version bump; address when doing a deliberate Prisma upgrade.
+-   [ ] **Rate limiting:** No rate limiter on any API routes (CodeQL alerts #4, #5). Add `express-rate-limit` — strict limiter on `/api/auth` (brute-force risk) and a general limiter on all other routes.
 -   [ ] **Pagination:**
     -   [ ] Implement pagination on all API endpoints that return lists.
 -   [x] **Date Input Enhancement:** Implement a "today" button or a calendar picker for date input fields to improve user experience and reduce manual typing.
