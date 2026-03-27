@@ -1,13 +1,14 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import TripReport from '../TripReport';
 import { vi } from 'vitest';
+import axios from 'axios';
+
+vi.mock('axios');
+const mockedAxios = axios as jest.Mocked<typeof axios>;
 
 describe('TripReport', () => {
   beforeEach(() => {
-    vi.spyOn(window, 'fetch').mockResolvedValue({
-      ok: true,
-      json: () => Promise.resolve([]),
-    } as Response);
+    mockedAxios.get = vi.fn().mockResolvedValue({ data: [] });
   });
 
   afterEach(() => {
@@ -15,7 +16,7 @@ describe('TripReport', () => {
   });
 
   it('renders loading state initially', () => {
-    vi.spyOn(window, 'fetch').mockReturnValue(new Promise(() => {}));
+    mockedAxios.get = vi.fn().mockReturnValue(new Promise(() => {}));
     render(<TripReport />);
     expect(screen.getByText(/Loading trip data.../i)).toBeInTheDocument();
   });
