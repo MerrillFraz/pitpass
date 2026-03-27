@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import axios from 'axios';
 
 interface Expense {
   id: string;
@@ -32,21 +33,15 @@ const TripReport: React.FC = () => {
   useEffect(() => {
     const fetchTrips = async () => {
       try {
-        const response = await fetch('/api/trips');
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        const data = await response.json();
-        console.log('API Response Data:', data);
+        const response = await axios.get('/api/trips');
+        const data = response.data;
         if (Array.isArray(data)) {
           setTrips(data);
         } else {
-          console.warn('API did not return an array for trips:', data);
-          setTrips([]); // Ensure it's always an array
+          setTrips([]);
         }
       } catch (e: any) {
-        console.error('Error fetching trips:', e);
-        setError(e.message);
+        setError(e.response?.data?.message || e.message);
       } finally {
         setLoading(false);
       }
@@ -78,10 +73,6 @@ const sortedTrips = [...trips].sort((a, b) => new Date(a.date).getTime() - new D
         <div className="space-y-8">
           {sortedTrips
             .map((trip) => {
-            console.log('Processing Trip:', trip);
-            console.log('Trip Expenses:', trip.expenses);
-            console.log('Trip Notes:', trip.notes);
-            
             const sortedExpenses = [...(trip.expenses ?? [])].sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
             const sortedNotes = [...(trip.notes ?? [])].sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
             const tripTotal = (trip.expenses ?? []).reduce((total, expense) => total + expense.amount, 0);

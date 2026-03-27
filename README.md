@@ -39,11 +39,12 @@ This project uses Docker and Docker Compose to create a consistent, one-step pro
 1.  **Clone the repository.**
 
 2.  **Create the Backend Environment File:**
-    The backend service requires an `.env` file for the database connection. Create a file named `.env` inside the `packages/backend/` directory with the following content:
+    The backend service requires an `.env` file for configuration. Create a file named `.env` inside the `packages/backend/` directory with the following content:
     ```env
     DATABASE_URL="postgresql://user:password@db:5432/pitpass_db"
+    JWT_SECRET="any-random-secret-string"
     ```
-    > **Note:** This `.env` file is for local development only and is already in `.gitignore`. The credentials here are for the local Docker database and do not affect production.
+    > **Note:** This `.env` file is for local development only and is already in `.gitignore`. The database credentials are for the local Docker database. Choose any value for `JWT_SECRET` — it just needs to be consistent across restarts.
 
 3.  **Build and Start the Application:**
     Navigate to the project's root directory and run the following command:
@@ -59,6 +60,10 @@ This project uses Docker and Docker Compose to create a consistent, one-step pro
 4.  **Access the Application:**
     Once all the services are running, you can access the web interface at:
     [http://localhost:5173](http://localhost:5173)
+
+    You will be redirected to the login page. Use the seeded credentials to log in:
+    - **Email:** `merrill@vortex.com`
+    - **Password:** `password`
 
 ### Database Seeding
 

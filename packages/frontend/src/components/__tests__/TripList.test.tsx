@@ -14,11 +14,14 @@ describe('TripList', () => {
   ];
 
   beforeEach(() => {
-    mockedAxios.get.mockResolvedValue({ data: { data: mockTrips } });
+    mockedAxios.get.mockImplementation((url: string) => {
+      if (url === '/api/teams') return Promise.resolve({ data: [] });
+      return Promise.resolve({ data: { data: mockTrips } });
+    });
   });
 
   afterEach(() => {
-    mockedAxios.get.mockRestore();
+    mockedAxios.get.mockReset();
   });
 
   it('renders loading state initially (if any) and then lists trips', async () => {

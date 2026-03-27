@@ -3,9 +3,10 @@ import axios from 'axios';
 
 interface AddExpenseFormProps {
   tripId: string;
+  onSuccess?: () => void;
 }
 
-function AddExpenseForm({ tripId }: AddExpenseFormProps) {
+function AddExpenseForm({ tripId, onSuccess }: AddExpenseFormProps) {
   const [type, setType] = useState('DIESEL');
   const [amount, setAmount] = useState('');
   const [date, setDate] = useState('');
@@ -18,9 +19,11 @@ function AddExpenseForm({ tripId }: AddExpenseFormProps) {
 
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
-    axios.post(`/api/${tripId}/expenses`, { type, amount: parseFloat(amount), date })
+    axios.post(`/api/trips/${tripId}/expenses`, { type, amount: parseFloat(amount), date: new Date(date).toISOString() })
       .then(() => {
-        window.location.reload();
+        setAmount('');
+        setDate('');
+        onSuccess?.();
       })
       .catch(error => {
         console.error('Error adding expense:', error);

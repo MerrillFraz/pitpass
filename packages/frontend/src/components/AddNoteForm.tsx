@@ -3,9 +3,10 @@ import axios from 'axios';
 
 interface AddNoteFormProps {
   tripId: string;
+  onSuccess?: () => void;
 }
 
-function AddNoteForm({ tripId }: AddNoteFormProps) {
+function AddNoteForm({ tripId, onSuccess }: AddNoteFormProps) {
   const [content, setContent] = useState('');
   const [date, setDate] = useState('');
 
@@ -17,9 +18,11 @@ function AddNoteForm({ tripId }: AddNoteFormProps) {
 
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
-    axios.post(`/api/${tripId}/notes`, { content, date })
+    axios.post(`/api/trips/${tripId}/notes`, { content, date: new Date(date).toISOString() })
       .then(() => {
-        window.location.reload();
+        setContent('');
+        setDate('');
+        onSuccess?.();
       })
       .catch(error => {
         console.error('Error adding note:', error);

@@ -5,8 +5,10 @@ import { createTripSchema, updateTripSchema } from '../schemas/tripSchemas';
 import expensesRouter from './expenses';
 import notesRouter from './notes';
 import tripStopsRouter from './tripStops'; // Import tripStops router
+import { protect } from '../middleware/auth';
 
 const router = Router();
+router.use(protect);
 
 // Middleware to attach tripId to req for nested routes
 router.use('/:tripId', (req, res, next) => {
@@ -20,68 +22,102 @@ router.use('/:tripId/notes', notesRouter);
 router.use('/:tripId/stops', tripStopsRouter); // Mount tripStops router
 
 // GET all trips
-router.get('/', async (req, res) => {
+router.get('/', async (req, res, next) => {
+  try {
     const trips = await prisma.trip.findMany({
+      where: {
+        userId: req.user.id,
+      },
       include: {
         expenses: true,
         notes: true,
       },
     });
     res.json(trips);
+  } catch (error) {
+    next(error);
+  }
 });
 
 // GET a single trip by id
-router.get('/:id', async (req, res) => {
+router.get('/:id', async (req, res, next) => {
+  try {
     const { id } = req.params;
-    const trip = await prisma.trip.findUnique({
-      where: { id },
+    const trip = await prisma.trip.findFirst({
+      where: {
+        id,
+        userId: req.user.id,
+      },
       include: {
         expenses: true,
         notes: true,
       },
     });
+    if (!trip) {
+      return res.status(404).json({ message: 'Trip not found' });
+    }
     res.json(trip);
+  } catch (error) {
+    next(error);
+  }
 });
 
 // POST a new trip
-router.post('/', validate(createTripSchema), async (req, res) => {
-    const { name, date, location, userId, teamId } = req.body;
+router.post('/', validate(createTripSchema), async (req, res, next) => {
+  try {
+    const { name, date, location, teamId } = req.body;
     const trip = await prisma.trip.create({
       data: {
         name,
         date,
         location,
-        userId,
+        userId: req.user.id,
         teamId,
       },
     });
     res.status(201).json(trip);
+  } catch (error) {
+    next(error);
+  }
 });
 
 // PUT (update) a trip
-router.put('/:id', validate(updateTripSchema), async (req, res) => {
+router.put('/:id', validate(updateTripSchema), async (req, res, next) => {
+  try {
     const { id } = req.params;
-    const { name, date, location, userId, teamId } = req.body;
-    const trip = await prisma.trip.update({
-      where: { id },
+    const { name, date, location, teamId } = req.body;
+    const trip = await prisma.trip.updateMany({
+      where: {
+        id,
+        userId: req.user.id,
+      },
       data: {
         name,
         date,
         location,
-        userId,
         teamId,
       },
     });
     res.json(trip);
+  } catch (error) {
+    next(error);
+  }
 });
 
 // DELETE a trip
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', async (req, res, next) => {
+  try {
     const { id } = req.params;
-    await prisma.trip.delete({
-      where: { id },
+    await prisma.trip.deleteMany({
+      where: {
+        id,
+        userId: req.user.id,
+      },
     });
-    res.status(204).json({ message: 'Trip deleted' });
+    res.status(204).end();
+  } catch (error) {
+    next(error);
+  }
 });
 
 export default router;

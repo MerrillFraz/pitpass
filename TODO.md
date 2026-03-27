@@ -23,18 +23,27 @@ This milestone focuses on establishing a strong, relational database schema and 
 -   [x] **Configuration Management:**
     -   [x] Externalize all secrets and configuration (database URL, API keys, JWT secret) using environment variables (`.env` file).
 
-## Milestone 2: Team and User Management
+## Milestone 2: Team and User Management (Complete)
 
--   [ ] **Authentication:**
-    -   [ ] Implement JWT-based authentication (`login`, `register`, `logout`).
-    -   [ ] Track the `User` making each data entry.
--   [ ] **Team Functionality:**
-    -   [ ] API endpoints for creating and managing a `Team`.
-    -   [ ] Implement a system for inviting new `Users` to a `Team`.
--   [ ] **Roles and Rosters:**
-    -   [ ] Define a default set of `Roles` ("owner", "driver", "pit boss", etc.).
-    -   [ ] API and UI for assigning multiple roles to `TeamMembers`, including a "primary" role.
-    -   [ ] API and UI to view the `Team` roster.
+-   [x] **Authentication:**
+    -   [x] Implement JWT-based authentication (`login`, `register`, `logout`). *(backend routes exist)*
+    -   [x] Auth middleware (`protect`) securing all data routes.
+    -   [x] RBAC middleware (`hasRole`) for owner-only team actions.
+    -   [x] **BUG FIXED:** Broken named import in `middleware/auth.ts` (`{ prisma }` → default import).
+    -   [x] **BUG FIXED:** `register` route and all test mocks updated to use `firstName`/`lastName` instead of non-existent `name` field.
+    -   [x] **BUG FIXED:** Seed user password now hashed with bcrypt. Login with `merrill@vortex.com` / `password` works.
+    -   [x] **BUG FIXED:** `JWT_SECRET` added to `packages/backend/.env` for local dev.
+    -   [x] **BUG FIXED:** Frontend production build now excludes test files (`tsconfig.app.json`).
+    -   [x] Frontend: Build login/register pages and auth context (JWT storage, attach token to all API requests).
+    -   [x] Track the `User` making each data entry. *(backend scopes trips to `req.user.id`; frontend now sends JWT on all requests)*
+-   [x] **Team Functionality:**
+    -   [x] API endpoints for creating and managing a `Team` (CRUD). *(backend complete)*
+    -   [x] Frontend: Build team creation/management UI (`TeamsPage` — list, create, delete).
+    -   [ ] Implement a system for inviting new `Users` to a `Team`. *(deferred — currently add-by-email requires user to already exist)*
+-   [x] **Roles and Rosters:**
+    -   [x] Define a default set of `Roles` (OWNER, DRIVER, PIT_BOSS, CREW, GUEST enum in schema).
+    -   [x] API endpoints for roster management: `GET/POST /api/teams/:teamId/members`, `PUT/DELETE /api/teams/:teamId/members/:membershipId`.
+    -   [x] Frontend UI for viewing and managing the team roster (`TeamRoster` — add by email, change role, remove; primary owner protected).
 
 ## Milestone 3: Car, Maintenance, and Performance Tracking
 
@@ -111,6 +120,40 @@ This milestone focuses on establishing a strong, relational database schema and 
 -   [ ] **CI/CD:**
     -   [x] Enhance `deploy.yml` to run tests and linting on every commit.
     -   [ ] Automate database migrations in the deployment process.
+    -   [ ] Wire `JWT_SECRET` into production deployment: add as a GitHub Actions secret, pass as `TF_VAR_jwt_secret` in `deploy.yml`, and declare it as a Terraform variable so it reaches the running container as an env var.
+-   [ ] **Dependency security:** Runtime vulnerabilities (axios, qs) resolved via `npm audit fix`. Remaining ~41 reported vulns are all Prisma CLI tooling or Jest/ESLint devDependencies — none run in production. The Prisma-related highs require a breaking Prisma version bump; address when doing a deliberate Prisma upgrade.
+-   [ ] **Rate limiting:** No rate limiter on any API routes (CodeQL alerts #4, #5). Add `express-rate-limit` — strict limiter on `/api/auth` (brute-force risk) and a general limiter on all other routes.
 -   [ ] **Pagination:**
     -   [ ] Implement pagination on all API endpoints that return lists.
 -   [x] **Date Input Enhancement:** Implement a "today" button or a calendar picker for date input fields to improve user experience and reduce manual typing.
+
+## Tech Debt
+
+Bugs and quality issues discovered during audit (2026-03-26). Items marked 🔴 are breaking the app right now.
+
+### 🔴 Critical Bugs
+
+-   [x] **FIXED: `middleware/auth.ts` broken import** — changed to default import.
+-   [x] **FIXED: `auth.ts` register / test mocks `name` field** — aligned to `firstName`/`lastName` throughout.
+-   [x] **FIXED: Seed user password** — now hashed with bcrypt.
+-   [x] **FIXED: `JWT_SECRET` missing** — added to `packages/backend/.env`.
+-   [x] **FIXED: Frontend tsconfig including test files** — excluded via `tsconfig.app.json`.
+-   [x] **FIXED: Zod schemas missing `body:` wrapper** — `expenseSchemas.ts`, `noteSchemas.ts`, `tripStopSchemas.ts`, and `raceResultSchemas.ts` now wrap fields in `body: z.object({...})`. Schema tests updated to match.
+-   [x] **FIXED: `AddExpenseForm.tsx` wrong API URL** — Changed from `/api/${tripId}/expenses` to `/api/trips/${tripId}/expenses`.
+-   [x] **FIXED: `AddNoteForm.tsx` wrong API URL** — Changed from `/api/${tripId}/notes` to `/api/trips/${tripId}/notes`.
+-   [x] **FIXED: `AddTripForm.tsx` missing `teamId`** — Form now fetches user's teams on mount and auto-selects (shows dropdown if multiple teams).
+-   [x] **FIXED: Date format in forms** — All three forms now send `new Date(date).toISOString()` instead of bare `YYYY-MM-DD`, matching Zod's `.datetime()` validator.
+
+### 🟡 Correctness Issues
+
+-   [x] **FIXED: `res.status(204).json(...)` on DELETE endpoints** — all DELETE handlers in `trips.ts`, `expenses.ts`, `notes.ts`, `tripStops.ts`, `raceResults.ts` now use `res.status(204).end()`.
+-   [x] **FIXED: `GET /api/teams/:teamId` returns `null` instead of 404** — now returns 404 when team not found or user not a member.
+-   [x] **FIXED: `trips.ts` route handlers missing try/catch** — all five handlers now wrapped; `GET /:id` also returns 404 on null.
+
+### 🟢 Quality / Code Hygiene
+
+-   [x] **FIXED: `TripReport.tsx` debug `console.log` statements** — removed all debug logs; also fixed to use `axios` instead of `fetch` (was causing 401 in production builds).
+-   [x] **FIXED: CORS origin hardcoded** — now reads from `CORS_ORIGIN` env var with `localhost:5173` fallback.
+-   [x] **FIXED: No `JWT_SECRET` validation on startup** — server now exits with a clear error if `JWT_SECRET` is not set.
+-   [ ] **Duplicate Zod error handling:** `validate.ts` catches `ZodError` and returns a response directly. The `ZodError` branch in `errorHandler.ts` is therefore dead code — `validate` never calls `next(zodError)`. Consider removing it from `errorHandler.ts` or unifying the approach.
+-   [x] **FIXED: `window.location.reload()` in form submit handlers** — `AddTripForm.tsx`, `AddExpenseForm.tsx`, and `AddNoteForm.tsx` now call an `onSuccess` callback and reset form state instead of reloading the page.

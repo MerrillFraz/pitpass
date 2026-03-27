@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
 import AddTripForm from './AddTripForm';
@@ -13,7 +13,7 @@ interface Trip {
 function TripList() {
   const [trips, setTrips] = useState<Trip[]>([]);
 
-  useEffect(() => {
+  const fetchTrips = useCallback(() => {
     axios.get('/api/trips')
       .then(response => {
         const tripsData = response.data.data || response.data;
@@ -23,6 +23,10 @@ function TripList() {
         console.error('Error fetching trips:', error);
       });
   }, []);
+
+  useEffect(() => {
+    fetchTrips();
+  }, [fetchTrips]);
 
   return (
     <div>
@@ -34,7 +38,7 @@ function TripList() {
           </li>
         ))}
       </ul>
-      <AddTripForm />
+      <AddTripForm onSuccess={fetchTrips} />
     </div>
   );
 }

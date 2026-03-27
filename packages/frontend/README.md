@@ -1,48 +1,52 @@
 # Frontend
 
-This is the frontend for the PitPass application. It's a React application built with Vite and TypeScript. It uses React Router for navigation and Bootstrap for styling.
+React + Vite + TypeScript SPA for PitPass. Uses React Router for navigation, Bootstrap for styling, and axios for API requests (JWT attached globally via `AuthContext`).
 
-## UI Components
+## Components
 
-The application is built using a component-based architecture. The main components are:
+| Component | Description |
+|---|---|
+| `LoginPage` | Login / register toggle |
+| `ProtectedRoute` | Redirects to `/login` if not authenticated |
+| `TripList` | Lists all trips; includes `AddTripForm` |
+| `TripDetails` | Single trip view with expenses and notes |
+| `TripReport` | Aggregate report across all trips |
+| `AddTripForm` | Create a trip |
+| `AddExpenseForm` | Add an expense to a trip |
+| `AddNoteForm` | Add a note to a trip |
+| `TeamsPage` | List, create, and delete teams |
+| `TeamRoster` | View and manage team members (add by email, change role, remove) |
 
--   `TripList`: Displays a list of all trips and includes a form to add new trips.
--   `TripDetails`: Displays the details of a single trip, including its expenses and notes.
--   `AddTripForm`: A form to add a new trip.
--   `AddExpenseForm`: A form to add a new expense to a trip.
--   `AddNoteForm`: A form to add a new note to a trip.
+## Routes
 
-## Available Routes
-
-The application has the following routes:
-
--   `/`: The home page, which displays the `TripList` component.
--   `/trip/:id`: The trip details page, which displays the `TripDetails` component.
+| Path | Component |
+|---|---|
+| `/login` | `LoginPage` |
+| `/` | `TripList` |
+| `/trip/:id` | `TripDetails` |
+| `/reports` | `TripReport` |
+| `/teams` | `TeamsPage` |
+| `/teams/:teamId/roster` | `TeamRoster` |
 
 ## Running Locally
 
-1.  Navigate to the frontend package:
-    ```sh
-    cd packages/frontend
-    ```
-2.  Install dependencies:
-    ```sh
-    npm install
-    ```
-3.  Start the development server:
-    ```sh
-    npm run dev
-    ```
-    The server will be running on `http://localhost:5173` (or another port if 5173 is in use).
+The recommended way is via Docker Compose from the repo root:
 
-The frontend is configured to proxy API requests to the backend server running on `http://localhost:3000`.
+```sh
+docker compose up --build
+```
+
+Frontend is served at `http://localhost:5173`. The nginx container reverse-proxies `/api/*` to the backend.
+
+To run standalone (requires a running backend at port 3000):
+
+```sh
+npm install
+npm run dev -w packages/frontend
+```
 
 ## Testing
 
-Unit and component tests for the frontend are set up using [Vitest](https://vitest.dev/) and [@testing-library/react](https://testing-library.com/docs/react-testing-library/intro/).
-
-To run the tests, navigate to the `packages/frontend` directory and execute:
-
 ```sh
-npm test
+npm test -w packages/frontend
 ```

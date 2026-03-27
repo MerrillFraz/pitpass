@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import { useParams, Link } from 'react-router-dom';
 import AddExpenseForm from './AddExpenseForm';
@@ -30,7 +30,7 @@ function TripDetails() {
   const { id } = useParams<{ id: string }>();
   const [trip, setTrip] = useState<Trip | null>(null);
 
-  useEffect(() => {
+  const fetchTrip = useCallback(() => {
     axios.get(`/api/trips/${id}`)
       .then(response => {
         setTrip(response.data);
@@ -39,6 +39,10 @@ function TripDetails() {
         console.error('Error fetching trip details:', error);
       });
   }, [id]);
+
+  useEffect(() => {
+    fetchTrip();
+  }, [fetchTrip]);
 
   if (!trip) {
     return <div>Loading...</div>;
@@ -62,7 +66,7 @@ function TripDetails() {
                   </li>
                 ))}
               </ul>
-              <AddExpenseForm tripId={trip.id} />
+              <AddExpenseForm tripId={trip.id} onSuccess={fetchTrip} />
             </div>
           </div>
         </div>
@@ -77,7 +81,7 @@ function TripDetails() {
                   </li>
                 ))}
               </ul>
-              <AddNoteForm tripId={trip.id} />
+              <AddNoteForm tripId={trip.id} onSuccess={fetchTrip} />
             </div>
           </div>
         </div>

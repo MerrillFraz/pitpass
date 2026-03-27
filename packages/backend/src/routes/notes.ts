@@ -50,7 +50,7 @@ router.delete('/:id', async (req, res) => {
   await prisma.note.delete({
     where: { id, tripId }, // Ensure note belongs to the trip
   });
-  res.status(204).json({ message: 'Note deleted' });
+  res.status(204).end();
 });
 
 export default router;

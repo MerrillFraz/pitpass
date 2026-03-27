@@ -52,7 +52,7 @@ router.delete('/:id', async (req, res) => {
   await prisma.expense.delete({
     where: { id, tripId }, // Ensure expense belongs to the trip
   });
-  res.status(204).json({ message: 'Expense deleted' });
+  res.status(204).end();
 });
 
 export default router;
