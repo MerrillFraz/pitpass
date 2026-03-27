@@ -5,7 +5,8 @@ declare global {
   namespace Express {
     interface Request {
       tripId?: string;
-      stopId?: string; // Added stopId
+      stopId?: string;
+      carId?: string;
       user: User;
     }
   }
