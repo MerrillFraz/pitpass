@@ -6,6 +6,7 @@ import { hasRole } from '../middleware/rbac';
 import { protect } from '../middleware/auth';
 import { Role } from '@prisma/client';
 import maintenanceRouter from './maintenance';
+import carSetupsRouter from './carSetups';
 
 const router = Router({ mergeParams: true });
 
@@ -134,5 +135,6 @@ router.get('/:carId/laps-since-maintenance', protect, async (req, res, next) => 
 });
 
 router.use('/:carId/maintenance', maintenanceRouter);
+router.use('/:carId/setups', carSetupsRouter);
 
 export default router;
