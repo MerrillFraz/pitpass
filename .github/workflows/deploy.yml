@@ -29,7 +29,7 @@ jobs:
         run: npm install # Installs dependencies for all workspaces
 
       - name: Generate Prisma Client
-        run: npx prisma generate --schema=packages/backend/prisma/schema.prisma
+        run: DATABASE_URL="postgresql://placeholder" npx prisma generate --schema=packages/backend/prisma/schema.prisma
 
       - name: Run Backend Tests
         run: npm test -w packages/backend
