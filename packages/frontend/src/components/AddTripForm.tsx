@@ -1,10 +1,26 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import axios from 'axios';
+
+interface Team {
+  id: string;
+  name: string;
+}
 
 function AddTripForm() {
   const [name, setName] = useState('');
   const [date, setDate] = useState('');
   const [location, setLocation] = useState('');
+  const [teams, setTeams] = useState<Team[]>([]);
+  const [teamId, setTeamId] = useState('');
+
+  useEffect(() => {
+    axios.get('/api/teams')
+      .then(res => {
+        setTeams(res.data);
+        if (res.data.length > 0) setTeamId(res.data[0].id);
+      })
+      .catch(err => console.error('Error fetching teams:', err));
+  }, []);
 
   const handleSetToday = () => {
     const today = new Date();
@@ -14,9 +30,8 @@ function AddTripForm() {
 
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
-    axios.post('/api/trips', { name, date, location })
+    axios.post('/api/trips', { name, date: new Date(date).toISOString(), location, teamId })
       .then(() => {
-        // Reload the page to see the new trip
         window.location.reload();
       })
       .catch(error => {
@@ -44,6 +59,16 @@ function AddTripForm() {
             <label htmlFor="location" className="form-label">Location</label>
             <input type="text" className="form-control" id="location" value={location} onChange={e => setLocation(e.target.value)} />
           </div>
+          {teams.length > 1 && (
+            <div className="mb-3">
+              <label htmlFor="teamId" className="form-label">Team</label>
+              <select className="form-select" id="teamId" value={teamId} onChange={e => setTeamId(e.target.value)}>
+                {teams.map(team => (
+                  <option key={team.id} value={team.id}>{team.name}</option>
+                ))}
+              </select>
+            </div>
+          )}
           <button type="submit" className="btn btn-primary">Add Trip</button>
         </form>
       </div>

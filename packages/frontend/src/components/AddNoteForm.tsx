@@ -17,7 +17,7 @@ function AddNoteForm({ tripId }: AddNoteFormProps) {
 
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
-    axios.post(`/api/${tripId}/notes`, { content, date })
+    axios.post(`/api/trips/${tripId}/notes`, { content, date: new Date(date).toISOString() })
       .then(() => {
         window.location.reload();
       })

@@ -17,6 +17,7 @@ pitpass/
 │   │       └── schemas/      # Zod validation schemas
 │   └── frontend/         # React + Vite + TypeScript SPA
 │       └── src/
+│           ├── context/      # AuthContext (token, user, login/logout)
 │           └── components/   # React components + tests
 ├── terraform/            # GCE deployment via Terraform
 └── .github/workflows/    # CI/CD: test + deploy on push to main
@@ -96,4 +97,4 @@ Tests run automatically in GitHub Actions on every push/PR to `main`.
 
 See **[TODO.md](TODO.md)** — it is the single source of truth for the roadmap, milestone status, and tech debt.
 
-**Current status (as of 2026-03-26):** Auth and trips are working end-to-end locally. Seeded user: `merrill@vortex.com` / `password`. Remaining critical bugs are the Zod `body:` wrapper issue on expenses/notes/tripStops/raceResults, and the frontend having no auth at all. See Tech Debt section of TODO.md.
+**Current status (as of 2026-03-27):** Milestone 2 auth is fully working end-to-end — backend and frontend. Login/register page, JWT stored in localStorage, axios Authorization header set globally, all routes protected. Seeded user: `merrill@vortex.com` / `password`. All critical bugs from the audit are resolved. See Tech Debt section of TODO.md for remaining correctness/quality issues.

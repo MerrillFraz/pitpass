@@ -31,7 +31,7 @@ router.post('/register', validate(registerSchema), async (req, res, next) => {
       expiresIn: '1h',
     });
 
-    res.status(201).json({ token });
+    res.status(201).json({ token, user: { id: user.id, email: user.email, firstName: user.firstName, lastName: user.lastName } });
   } catch (error) {
     next(error);
   }
@@ -55,7 +55,7 @@ router.post('/login', validate(loginSchema), async (req, res, next) => {
       expiresIn: '1h',
     });
 
-    res.status(200).json({ token });
+    res.status(200).json({ token, user: { id: user.id, email: user.email, firstName: user.firstName, lastName: user.lastName } });
   } catch (error) {
     next(error);
   }

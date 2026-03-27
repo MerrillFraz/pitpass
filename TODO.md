@@ -34,8 +34,8 @@ This milestone focuses on establishing a strong, relational database schema and 
     -   [x] **BUG FIXED:** Seed user password now hashed with bcrypt. Login with `merrill@vortex.com` / `password` works.
     -   [x] **BUG FIXED:** `JWT_SECRET` added to `packages/backend/.env` for local dev.
     -   [x] **BUG FIXED:** Frontend production build now excludes test files (`tsconfig.app.json`).
-    -   [ ] Frontend: Build login/register pages and auth context (JWT storage, attach token to all API requests).
-    -   [ ] Track the `User` making each data entry. *(backend scopes trips to `req.user.id` already; frontend just needs auth)*
+    -   [x] Frontend: Build login/register pages and auth context (JWT storage, attach token to all API requests).
+    -   [x] Track the `User` making each data entry. *(backend scopes trips to `req.user.id`; frontend now sends JWT on all requests)*
 -   [ ] **Team Functionality:**
     -   [x] API endpoints for creating and managing a `Team` (CRUD). *(backend complete)*
     -   [ ] Frontend: Build team creation/management UI.
@@ -137,7 +137,9 @@ Bugs and quality issues discovered during audit (2026-03-26). Items marked 🔴 
 -   [x] **FIXED: Frontend tsconfig including test files** — excluded via `tsconfig.app.json`.
 -   [x] **FIXED: Zod schemas missing `body:` wrapper** — `expenseSchemas.ts`, `noteSchemas.ts`, `tripStopSchemas.ts`, and `raceResultSchemas.ts` now wrap fields in `body: z.object({...})`. Schema tests updated to match.
 -   [x] **FIXED: `AddExpenseForm.tsx` wrong API URL** — Changed from `/api/${tripId}/expenses` to `/api/trips/${tripId}/expenses`.
--   [ ] **`AddTripForm.tsx` missing `teamId`:** `createTripSchema` requires `teamId` but the form doesn't have a team selector. Every trip creation from the UI fails validation. Needs auth context to know which teams the user belongs to.
+-   [x] **FIXED: `AddNoteForm.tsx` wrong API URL** — Changed from `/api/${tripId}/notes` to `/api/trips/${tripId}/notes`.
+-   [x] **FIXED: `AddTripForm.tsx` missing `teamId`** — Form now fetches user's teams on mount and auto-selects (shows dropdown if multiple teams).
+-   [x] **FIXED: Date format in forms** — All three forms now send `new Date(date).toISOString()` instead of bare `YYYY-MM-DD`, matching Zod's `.datetime()` validator.
 
 ### 🟡 Correctness Issues
 
