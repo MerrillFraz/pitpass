@@ -9,13 +9,17 @@ React + Vite + TypeScript SPA for PitPass. Uses React Router for navigation, Boo
 | `LoginPage` | Login / register toggle |
 | `ProtectedRoute` | Redirects to `/login` if not authenticated |
 | `TripList` | Lists all trips; includes `AddTripForm` |
-| `TripDetails` | Single trip view with expenses and notes |
+| `TripDetails` | Single trip view with expenses, notes, and trip stops |
+| `TripStopDetail` | Single stop view; log and manage race results per session |
 | `TripReport` | Aggregate report across all trips |
 | `AddTripForm` | Create a trip |
 | `AddExpenseForm` | Add an expense to a trip |
 | `AddNoteForm` | Add a note to a trip |
 | `TeamsPage` | List, create, and delete teams |
 | `TeamRoster` | View and manage team members (add by email, change role, remove) |
+| `CarsPage` | List, add, edit, and delete cars for a team |
+| `CarMaintenancePage` | Log and manage maintenance events; shows laps since last service |
+| `CarSetupPage` | Record and manage car setup sheets per car |
 
 ## Routes
 
@@ -24,9 +28,13 @@ React + Vite + TypeScript SPA for PitPass. Uses React Router for navigation, Boo
 | `/login` | `LoginPage` |
 | `/` | `TripList` |
 | `/trip/:id` | `TripDetails` |
+| `/trip/:id/stops/:stopId` | `TripStopDetail` |
 | `/reports` | `TripReport` |
 | `/teams` | `TeamsPage` |
 | `/teams/:teamId/roster` | `TeamRoster` |
+| `/teams/:teamId/cars` | `CarsPage` |
+| `/teams/:teamId/cars/:carId/maintenance` | `CarMaintenancePage` |
+| `/teams/:teamId/cars/:carId/setups` | `CarSetupPage` |
 
 ## Running Locally
 

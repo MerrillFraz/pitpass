@@ -6,6 +6,7 @@ import { protect } from '../middleware/auth';
 import { hasRole } from '../middleware/rbac';
 import { Role } from '@prisma/client';
 import rosterRouter from './roster';
+import carRouter from './cars';
 
 const router = Router();
 router.use(protect);
@@ -133,5 +134,6 @@ router.delete('/:teamId', hasRole([Role.OWNER]), async (req, res, next) => {
 });
 
 router.use('/:teamId/members', rosterRouter);
+router.use('/:teamId/cars', carRouter);
 
 export default router;

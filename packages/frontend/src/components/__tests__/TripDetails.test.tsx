@@ -23,11 +23,15 @@ describe('TripDetails', () => {
     location: 'Test Location',
     expenses: [],
     notes: [],
+    tripStops: [],
   };
 
   beforeEach(() => {
     (useParams as vi.Mock).mockReturnValue({ id: 'trip-1' });
-    mockedAxios.get.mockResolvedValue({ data: mockTrip });
+    mockedAxios.get.mockImplementation((url: string) => {
+      if (url === '/api/tracks') return Promise.resolve({ data: [] });
+      return Promise.resolve({ data: mockTrip });
+    });
   });
 
   it('renders loading state initially', () => {

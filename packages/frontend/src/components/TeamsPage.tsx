@@ -62,6 +62,9 @@ function TeamsPage() {
                 <Link to={`/teams/${team.id}/roster`} className="btn btn-sm btn-outline-primary">
                   Manage Roster
                 </Link>
+                <Link to={`/teams/${team.id}/cars`} className="btn btn-sm btn-outline-secondary">
+                  Cars
+                </Link>
                 {isOwner(team) && (
                   <button
                     className="btn btn-sm btn-outline-danger"

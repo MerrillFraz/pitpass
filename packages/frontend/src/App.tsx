@@ -7,6 +7,10 @@ import TripDetails from './components/TripDetails';
 import TripReport from './components/TripReport';
 import TeamsPage from './components/TeamsPage';
 import TeamRoster from './components/TeamRoster';
+import CarsPage from './components/CarsPage';
+import CarMaintenancePage from './components/CarMaintenancePage';
+import CarSetupPage from './components/CarSetupPage';
+import TripStopDetail from './components/TripStopDetail';
 import './App.css';
 
 function NavBar() {
@@ -45,9 +49,13 @@ function App() {
             <Route path="/login" element={<LoginPage />} />
             <Route path="/" element={<ProtectedRoute><TripList /></ProtectedRoute>} />
             <Route path="/trip/:id" element={<ProtectedRoute><TripDetails /></ProtectedRoute>} />
+            <Route path="/trip/:id/stops/:stopId" element={<ProtectedRoute><TripStopDetail /></ProtectedRoute>} />
             <Route path="/reports" element={<ProtectedRoute><TripReport /></ProtectedRoute>} />
             <Route path="/teams" element={<ProtectedRoute><TeamsPage /></ProtectedRoute>} />
             <Route path="/teams/:teamId/roster" element={<ProtectedRoute><TeamRoster /></ProtectedRoute>} />
+            <Route path="/teams/:teamId/cars" element={<ProtectedRoute><CarsPage /></ProtectedRoute>} />
+            <Route path="/teams/:teamId/cars/:carId/maintenance" element={<ProtectedRoute><CarMaintenancePage /></ProtectedRoute>} />
+            <Route path="/teams/:teamId/cars/:carId/setups" element={<ProtectedRoute><CarSetupPage /></ProtectedRoute>} />
           </Routes>
         </div>
       </Router>

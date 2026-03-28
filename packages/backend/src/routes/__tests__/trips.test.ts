@@ -89,6 +89,10 @@ describe('Trips Routes', () => {
       include: {
         expenses: true,
         notes: true,
+        tripStops: {
+          include: { track: true },
+          orderBy: { startDate: 'asc' },
+        },
       },
     });
   });

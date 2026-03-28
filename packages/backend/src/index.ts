@@ -2,6 +2,7 @@ import express, { Express, Request, Response } from 'express';
 import tripsRouter from './routes/trips';
 import authRouter from './routes/auth';
 import teamsRouter from './routes/teams';
+import tracksRouter from './routes/tracks';
 // import expensesRouter from './routes/expenses'; // Removed
 // import notesRouter from './routes/notes';     // Removed
 import cors from 'cors';
@@ -27,6 +28,7 @@ app.get('/', (req: Request, res: Response) => {
 app.use('/api/auth', authRouter);
 app.use('/api/trips', tripsRouter);
 app.use('/api/teams', teamsRouter);
+app.use('/api/tracks', tracksRouter);
 // app.use('/api', expensesRouter); // Removed
 // app.use('/api', notesRouter);     // Removed
 

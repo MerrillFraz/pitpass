@@ -1,6 +1,6 @@
 # PitPass
 
-The PitPass application is designed to help a race team track their expenses throughout a racing season. It allows logging trips, various types of expenses, notes, and receipts.
+PitPass is a racing team management application — a one-stop tool for tracking trips, expenses, car maintenance, race results, and team rosters across a racing season. It allows logging race events (trips and stops), expenses, notes, car setups, maintenance history, and detailed per-session race results.
 
 ## Architecture
 
