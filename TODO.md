@@ -64,7 +64,25 @@ This milestone focuses on establishing a strong, relational database schema and 
         -   Heat Race(s): start/end position, laps (support for multiple heats).
         -   Feature Race: laps, best lap, position, notes on damage/behavior.
 
-## Milestone 4: Trip & Event Logistics
+## Milestone 4: Car Setup & Results Enhancements + Trip Logistics
+
+### Car & Results Improvements (Deferred from M3)
+
+-   [ ] **Car Setup — Per-Corner Data Model:**
+    -   [ ] Replace current flat Front/Rear `CarSetup` fields with a normalized `CarCornerSetup` child model (4 rows per setup: LF, RF, LR, RR).
+    -   [ ] Per-corner fields: ride height, tire size, tire compound, wheel backspacing/offset, tire pressure (cold/baseline), spring rate, spring length.
+    -   [ ] Add `carWeight` (baseline build weight) to `CarSetup`.
+    -   [ ] Add `requiredWeight` and `actualWeight` to `RaceResult` (varies by track/scale — "almost light at one track means in danger at another").
+    -   [ ] Add per-corner `tirePressureLF/RF/LR/RR` to `RaceResult` for tracking hot pressures mid-session (distinct from cold baseline on setup sheet).
+    -   [ ] Update backend routes, Zod schemas, seed data, and frontend form to match new model.
+    -   [ ] **Note:** Data model was intentionally kept simple in M3. Schema redesign here is a breaking migration — plan accordingly.
+-   [ ] **Race Results — Session Sort Order:**
+    -   [ ] Sort results on the TripStopDetail page by session type in race-day order: Hot Laps → Qualifying → Heat Race → Feature.
+    -   [ ] Apply consistent sort order on both the frontend display and the backend `GET /results` query.
+-   [ ] **App Title:**
+    -   [ ] Replace the "Racing Expenses" heading (leftover from early prototype) with "PitPass" or appropriate page-level titles throughout the app.
+
+### Trip & Event Logistics
 
 -   [ ] **Track Management:**
     -   [ ] API and UI for creating and managing a list of `Tracks` including their location.
