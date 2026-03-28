@@ -35,6 +35,35 @@ All data routes require `Authorization: Bearer <token>`.
 - `PUT /api/trips/:id`
 - `DELETE /api/trips/:id`
 
+### Tracks
+
+- `GET /api/tracks` — all tracks (read-only; for populating selectors)
+
+### Cars
+
+- `GET /api/teams/:teamId/cars`
+- `POST /api/teams/:teamId/cars` — `{ make, model, year, color?, vin? }` *(OWNER or PIT_BOSS)*
+- `GET /api/teams/:teamId/cars/:carId`
+- `PUT /api/teams/:teamId/cars/:carId` *(OWNER or PIT_BOSS)*
+- `DELETE /api/teams/:teamId/cars/:carId` *(OWNER or PIT_BOSS)*
+- `GET /api/teams/:teamId/cars/:carId/laps-since-maintenance` — `{ lapsSinceMaintenance, lastMaintenanceDate }`
+
+### Maintenance
+
+- `GET /api/teams/:teamId/cars/:carId/maintenance`
+- `POST /api/teams/:teamId/cars/:carId/maintenance` — `{ type, date, notes?, lapInterval? }` *(OWNER or PIT_BOSS)*
+- `GET /api/teams/:teamId/cars/:carId/maintenance/:eventId`
+- `PUT /api/teams/:teamId/cars/:carId/maintenance/:eventId` *(OWNER or PIT_BOSS)*
+- `DELETE /api/teams/:teamId/cars/:carId/maintenance/:eventId` *(OWNER or PIT_BOSS)*
+
+### Car Setups
+
+- `GET /api/teams/:teamId/cars/:carId/setups`
+- `POST /api/teams/:teamId/cars/:carId/setups` *(OWNER or PIT_BOSS)*
+- `GET /api/teams/:teamId/cars/:carId/setups/:setupId`
+- `PUT /api/teams/:teamId/cars/:carId/setups/:setupId` *(OWNER or PIT_BOSS)*
+- `DELETE /api/teams/:teamId/cars/:carId/setups/:setupId` *(OWNER or PIT_BOSS)*
+
 ### Nested Trip Resources
 
 - `GET|POST /api/trips/:tripId/expenses`
@@ -42,9 +71,9 @@ All data routes require `Authorization: Bearer <token>`.
 - `GET|POST /api/trips/:tripId/notes`
 - `PUT|DELETE /api/trips/:tripId/notes/:id`
 - `GET|POST /api/trips/:tripId/stops`
-- `PUT|DELETE /api/trips/:tripId/stops/:id`
+- `GET|PUT|DELETE /api/trips/:tripId/stops/:id`
 - `GET|POST /api/trips/:tripId/stops/:stopId/results`
-- `PUT|DELETE /api/trips/:tripId/stops/:stopId/results/:id`
+- `GET|PUT|DELETE /api/trips/:tripId/stops/:stopId/results/:id`
 
 ## Running Locally
 
