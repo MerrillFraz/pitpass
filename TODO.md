@@ -45,20 +45,21 @@ This milestone focuses on establishing a strong, relational database schema and 
     -   [x] API endpoints for roster management: `GET/POST /api/teams/:teamId/members`, `PUT/DELETE /api/teams/:teamId/members/:membershipId`.
     -   [x] Frontend UI for viewing and managing the team roster (`TeamRoster` — add by email, change role, remove; primary owner protected).
 
-## Milestone 3: Car, Maintenance, and Performance Tracking
+## Milestone 3: Car, Maintenance, and Performance Tracking (Complete)
 
--   [ ] **Car Management:**
-    -   [ ] API and UI to add/edit/remove `Cars` associated with a `Team`.
--   [ ] **Maintenance Tracking:**
-    -   [ ] Create models for `MaintenanceEvent` (e.g., oil change, valve spring change, motor refresh).
-    -   [ ] API and UI to log maintenance events with date and notes.
-    -   [ ] Track "laps completed under power" for each `RaceResult`.
-    -   [ ] Develop logic to calculate and display laps on motor/components since the last maintenance event.
--   [ ] **Car Setup Metrics:**
-    -   [ ] Create a `CarSetup` model linked to a `Car` and a `RaceResult`/`TripStop`.
-    -   [ ] API and UI to record setup details: tire compound/sizes, offset, spring rates, ride heights, shock rates, gear ratio.
--   [ ] **Race Results:**
-    -   [ ] API and UI to log detailed race results:
+-   [x] **Car Management:**
+    -   [x] API and UI to add/edit/remove `Cars` associated with a `Team`.
+-   [x] **Maintenance Tracking:**
+    -   [x] Create models for `MaintenanceEvent` (e.g., oil change, valve spring change, motor refresh).
+    -   [x] API and UI to log maintenance events with date and notes.
+    -   [x] Track "laps completed under power" for each `RaceResult`.
+    -   [x] Develop logic to calculate and display laps on motor/components since the last maintenance event.
+-   [x] **Car Setup Metrics:**
+    -   [x] Create a `CarSetup` model linked to a `Car` and a `RaceResult`/`TripStop`.
+    -   [x] API and UI to record setup details: tire compound/sizes, offset, spring rates, ride heights, shock rates, gear ratio.
+    -   [ ] Per-corner data model deferred — see Milestone 4.
+-   [x] **Race Results:**
+    -   [x] API and UI to log detailed race results:
         -   Hot Laps: laps, time, notes on changes.
         -   Qualifying: laps, time, position, notes on changes.
         -   Heat Race(s): start/end position, laps (support for multiple heats).
@@ -139,6 +140,7 @@ This milestone focuses on establishing a strong, relational database schema and 
     -   [x] Enhance `deploy.yml` to run tests and linting on every commit.
     -   [ ] Automate database migrations in the deployment process.
     -   [ ] Wire `JWT_SECRET` into production deployment: add as a GitHub Actions secret, pass as `TF_VAR_jwt_secret` in `deploy.yml`, and declare it as a Terraform variable so it reaches the running container as an env var.
+    -   [ ] **GCE production deployment blocked:** The target GCE zone has no available VM resources (`ZONE_RESOURCE_POOL_EXHAUSTED`). Production deployment is deferred until capacity is available or a different zone/region is chosen. Running locally only for now.
 -   [ ] **Dependency security:** Runtime vulnerabilities (axios, qs) resolved via `npm audit fix`. Remaining ~41 reported vulns are all Prisma CLI tooling or Jest/ESLint devDependencies — none run in production. The Prisma-related highs require a breaking Prisma version bump; address when doing a deliberate Prisma upgrade.
 -   [ ] **Rate limiting:** No rate limiter on any API routes (CodeQL alerts #4, #5). Add `express-rate-limit` — strict limiter on `/api/auth` (brute-force risk) and a general limiter on all other routes.
 -   [ ] **Pagination:**
@@ -173,5 +175,6 @@ Bugs and quality issues discovered during audit (2026-03-26). Items marked 🔴 
 -   [x] **FIXED: `TripReport.tsx` debug `console.log` statements** — removed all debug logs; also fixed to use `axios` instead of `fetch` (was causing 401 in production builds).
 -   [x] **FIXED: CORS origin hardcoded** — now reads from `CORS_ORIGIN` env var with `localhost:5173` fallback.
 -   [x] **FIXED: No `JWT_SECRET` validation on startup** — server now exits with a clear error if `JWT_SECRET` is not set.
+-   [ ] **Missing route tests (M2-era):** `expenses.ts`, `notes.ts`, and `roster.ts` have no route-level test files. Low risk since these are simpler routes and the core auth/RBAC patterns are covered elsewhere, but worth closing the gap.
 -   [ ] **Duplicate Zod error handling:** `validate.ts` catches `ZodError` and returns a response directly. The `ZodError` branch in `errorHandler.ts` is therefore dead code — `validate` never calls `next(zodError)`. Consider removing it from `errorHandler.ts` or unifying the approach.
 -   [x] **FIXED: `window.location.reload()` in form submit handlers** — `AddTripForm.tsx`, `AddExpenseForm.tsx`, and `AddNoteForm.tsx` now call an `onSuccess` callback and reset form state instead of reloading the page.
