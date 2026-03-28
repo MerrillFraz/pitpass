@@ -21,7 +21,7 @@ async function requireMembership(userId: string, teamId: string) {
 // GET /api/teams/:teamId/cars
 router.get('/', async (req, res, next) => {
   try {
-    const { teamId } = req.params;
+    const { teamId } = req.params as { teamId: string };
     const membership = await requireMembership(req.user.id, teamId);
     if (!membership) return res.status(403).json({ message: 'Not a member of this team' });
 
@@ -35,7 +35,7 @@ router.get('/', async (req, res, next) => {
 // GET /api/teams/:teamId/cars/:carId
 router.get('/:carId', async (req, res, next) => {
   try {
-    const { teamId, carId } = req.params;
+    const { teamId, carId } = req.params as { teamId: string; carId: string };
     const membership = await requireMembership(req.user.id, teamId);
     if (!membership) return res.status(403).json({ message: 'Not a member of this team' });
 

@@ -44,7 +44,7 @@ function CarsPage() {
   useEffect(() => {
     fetchCars();
     axios.get(`/api/teams/${teamId}/members`)
-      .then(res => setMemberships(res.data.map((m: { userId: string; role: string; isPrimary: boolean }) => ({
+      .then(res => setMemberships(res.data.map((m: { userId: string; role: string; isPrimary: boolean; user?: { id: string } }) => ({
         userId: m.userId ?? m.user?.id,
         role: m.role,
         isPrimary: m.isPrimary,

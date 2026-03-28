@@ -52,15 +52,11 @@ interface TripStop {
   raceResults: RaceResult[];
 }
 
-interface Trip {
-  id: string;
-  teamId: string;
-}
 
 function TripStopDetail() {
   const { id: tripId, stopId } = useParams<{ id: string; stopId: string }>();
   const [stop, setStop] = useState<TripStop | null>(null);
-  const [trip, setTrip] = useState<Trip | null>(null);
+
   const [cars, setCars] = useState<Car[]>([]);
   const [error, setError] = useState('');
 
@@ -83,7 +79,6 @@ function TripStopDetail() {
     fetchStop();
     axios.get(`/api/trips/${tripId}`)
       .then(res => {
-        setTrip(res.data);
         return axios.get(`/api/teams/${res.data.teamId}/cars`);
       })
       .then(res => {
